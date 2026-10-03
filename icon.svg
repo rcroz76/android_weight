@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141b2d" />
+      <stop offset="100%" stop-color="#0a0e17" />
+    </linearGradient>
+    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#10b981" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- App Icon Rounded Background -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="111" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="4" />
+
+  <!-- Circular Badge with Gym Dumbbell -->
+  <circle cx="256" cy="256" r="175" fill="url(#badgeGrad)" filter="url(#glow)" />
+
+  <!-- Dumbbell Icon -->
+  <g transform="translate(256, 256) rotate(-45) translate(-256, -256)" stroke="#0a0e17" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Center Bar -->
+    <line x1="160" y1="256" x2="352" y2="256" stroke-width="32" />
+    <!-- Collars -->
+    <line x1="190" y1="230" x2="190" y2="282" stroke-width="20" />
+    <line x1="322" y1="230" x2="322" y2="282" stroke-width="20" />
+    <!-- Inner Plates -->
+    <rect x="145" y="196" width="30" height="120" rx="8" fill="#0a0e17" stroke="#0a0e17" stroke-width="12" />
+    <rect x="337" y="196" width="30" height="120" rx="8" fill="#0a0e17" stroke="#0a0e17" stroke-width="12" />
+    <!-- Outer Plates -->
+    <rect x="105" y="216" width="26" height="80" rx="6" fill="#0a0e17" stroke="#0a0e17" stroke-width="12" />
+    <rect x="381" y="216" width="26" height="80" rx="6" fill="#0a0e17" stroke="#0a0e17" stroke-width="12" />
+  </g>
+</svg>

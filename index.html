@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weight Tracker - Modern Gym Dashboard</title>
+  
+  <!-- Progressive Web App (PWA) Settings for Android & Mobile -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weight Tracker">
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Link external stylesheet for modern gym styling -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Container -->
+  <div class="app-container">
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo-badge">
+          <svg class="icon-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6.5 6.5 11 11"/>
+            <path d="m21 21-1-1"/>
+            <path d="m3 3 1 1"/>
+            <path d="m18 22 4-4"/>
+            <path d="m2 6 4-4"/>
+            <path d="m3 10 7-7"/>
+            <path d="m14 21 7-7"/>
+          </svg>
+        </div>
+        <div>
+          <h1>WEIGHT TRACKER</h1>
+          <p class="subtitle">Log your daily weigh-ins and track your fitness progress over time</p>
+        </div>
+      </div>
+      <!-- One-click Install App button (shown on Android/Chrome when PWA is installable) -->
+      <button id="install-pwa-btn" class="btn-install-pwa hidden" title="Install as Android App">
+        📱 Install App
+      </button>
+    </header>
+
+    <!-- 1. DASHBOARD SUMMARY SECTION (Displayed at the top of the page) -->
+    <section class="summary-section" aria-label="Weight Summary Overview">
+      <!-- Prominent Featured Card: Current Weight -->
+      <div class="summary-card hero-card">
+        <div class="card-label">Current Weight</div>
+        <div class="hero-weight-display">
+          <span id="hero-current-weight" class="hero-number">--</span>
+          <span class="unit">kg</span>
+        </div>
+        <!-- Imperial Unit Display: Stone & Pounds -->
+        <div class="hero-imperial-badge" id="hero-imperial-badge">
+          <span class="imperial-icon" aria-hidden="true">⚡</span>
+          <span id="hero-imperial-text">-- st -- lbs</span>
+        </div>
+        <div id="hero-date-badge" class="stat-subtext">Latest weigh-in</div>
+      </div>
+
+      <!-- Starting Weight Card -->
+      <div class="summary-card">
+        <div class="card-icon" aria-hidden="true">🏁</div>
+        <div class="card-info">
+          <div class="card-label">Starting Weight</div>
+          <div class="card-value">
+            <span id="stat-start-weight">--</span>
+            <span class="unit-sm">kg</span>
+          </div>
+          <div id="stat-start-imperial" class="imperial-subtext">-- st -- lbs</div>
+          <div id="stat-start-weeks" class="weeks-subtext">-- weeks gone by</div>
+          <div id="stat-start-date" class="stat-subtext">First weigh-in</div>
+        </div>
+      </div>
+
+      <!-- Total Weight Lost / Gained Card -->
+      <div class="summary-card">
+        <div class="card-icon" id="stat-progress-icon" aria-hidden="true">⚖️</div>
+        <div class="card-info">
+          <div class="card-label">Total Weight Lost/Gained</div>
+          <div class="card-value" id="stat-total-change-container">
+            <span id="stat-total-change">--</span>
+            <span class="unit-sm">kg</span>
+          </div>
+          <div id="stat-total-change-imperial" class="imperial-subtext">-- st -- lbs</div>
+          <div id="stat-progress-subtext" class="stat-subtext">Overall progress</div>
+        </div>
+      </div>
+
+      <!-- Number of Recorded Weigh-ins Card -->
+      <div class="summary-card">
+        <div class="card-icon" aria-hidden="true">📅</div>
+        <div class="card-info">
+          <div class="card-label">Recorded Weigh-ins</div>
+          <div class="card-value">
+            <span id="stat-count">0</span>
+            <span class="unit-sm">logs</span>
+          </div>
+          <div class="stat-subtext">Total tracked sessions</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1B. NUTRITION TARGETS & HEALTH METRICS (Calories, Protein, BMI & Goal Weight) -->
+    <section class="targets-section" aria-label="Daily Nutrition and Health Metrics">
+      
+      <!-- Daily Calories Card (Current Pounds × 12) -->
+      <div class="summary-card target-card">
+        <div class="card-icon icon-fire" aria-hidden="true">🔥</div>
+        <div class="card-info">
+          <div class="card-label">Daily Calories Target</div>
+          <div class="card-value">
+            <span id="target-calories">--</span>
+            <span class="unit-sm">kcal</span>
+          </div>
+          <div class="stat-subtext" id="target-calories-subtext">(Current lbs × 12) - 500</div>
+        </div>
+      </div>
+
+      <!-- Daily Protein Card (Current Pounds × 1) -->
+      <div class="summary-card target-card">
+        <div class="card-icon icon-protein" aria-hidden="true">🥩</div>
+        <div class="card-info">
+          <div class="card-label">Daily Protein Target</div>
+          <div class="card-value">
+            <span id="target-protein">--</span>
+            <span class="unit-sm">g</span>
+          </div>
+          <div class="stat-subtext" id="target-protein-subtext">Current lbs × 1g</div>
+        </div>
+      </div>
+
+      <!-- BMI (Body Mass Index) Card -->
+      <div class="summary-card target-card">
+        <div class="card-icon icon-bmi" aria-hidden="true">📊</div>
+        <div class="card-info">
+          <div class="card-label">Body Mass Index (BMI)</div>
+          <div class="card-value">
+            <span id="stat-bmi">--</span>
+            <span id="bmi-badge" class="badge-bmi hidden">Normal</span>
+          </div>
+          <div class="stat-subtext bmi-action-row">
+            <span id="stat-height-display">Height: 175 cm</span>
+            <button type="button" id="btn-edit-height" class="btn-link">Edit Height</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goal Weight & Reset Goal Card -->
+      <div class="summary-card target-card goal-card">
+        <div class="card-icon icon-goal" aria-hidden="true">🎯</div>
+        <div class="card-info">
+          <div class="goal-header-row">
+            <div class="card-label">Goal Weight</div>
+            <button type="button" id="btn-reset-goal" class="btn-mini-reset" title="Set or reset your goal weight">
+              Reset Goal
+            </button>
+          </div>
+          <div class="card-value">
+            <span id="stat-goal-weight">--</span>
+            <span class="unit-sm" id="stat-goal-unit">kg</span>
+          </div>
+          <div class="stat-subtext" id="stat-goal-subtext">No goal set</div>
+          <div class="goal-progress-bar-container" id="goal-progress-bar-container">
+            <div class="goal-progress-bar" id="goal-progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Main Workspace Grid: Log Weight Form and Progress Graph -->
+    <main class="dashboard-grid">
+
+      <!-- 2. WEIGHT ENTRY FORM CARD -->
+      <section class="card form-card" aria-labelledby="form-heading">
+        <h2 id="form-heading" class="section-title">
+          <span class="title-bullet"></span> Log Weight Entry
+        </h2>
+        <p class="section-desc">Record your weight for today or a specific date</p>
+
+        <form id="weight-form" novalidate>
+          
+          <!-- Date Input -->
+          <div class="form-group">
+            <label for="weight-date">Date</label>
+            <input 
+              type="date" 
+              id="weight-date" 
+              name="date" 
+              required
+            >
+            <small class="helper-text">Select the date of the weigh-in</small>
+          </div>
+
+          <!-- Weight Input (Decimal values accepted, kg displayed beside) -->
+          <div class="form-group">
+            <label for="weight-input">Weight</label>
+            <div class="input-with-unit">
+              <input 
+                type="number" 
+                id="weight-input" 
+                name="weight" 
+                step="0.1" 
+                min="20" 
+                max="500" 
+                placeholder="e.g. 82.5" 
+                required
+              >
+              <span class="unit-badge">kg</span>
+            </div>
+            <small class="helper-text">Accepts decimal numbers (e.g. 82.5)</small>
+          </div>
+
+          <!-- User Feedback Message Area for alerts / validation -->
+          <div id="form-feedback" class="feedback-msg" role="alert" aria-live="polite"></div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button type="submit" id="save-btn" class="btn btn-primary">
+              <span class="btn-icon">💾</span> Save Weight
+            </button>
+            <button type="button" id="clear-btn" class="btn btn-secondary">
+              <span class="btn-icon">✕</span> Clear Form
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- 3. PROGRESS GRAPH CARD -->
+      <section class="card chart-card" aria-labelledby="chart-heading">
+        <div class="chart-header">
+          <div>
+            <h2 id="chart-heading" class="section-title">
+              <span class="title-bullet"></span> Progress Graph
+            </h2>
+            <p class="section-desc">Weight (kg) over time</p>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-dot"></span>
+            <span>Body Weight (kg)</span>
+          </div>
+        </div>
+
+        <!-- Canvas for the dynamic line chart -->
+        <div class="canvas-wrapper">
+          <canvas id="weight-chart" height="260"></canvas>
+          <!-- Empty State overlay when less than 2 points are logged -->
+          <div id="chart-empty-state" class="chart-empty hidden">
+            <p>Log at least two weigh-ins to generate the progress graph.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 4. WEIGHT HISTORY TABLE SECTION -->
+    <section class="card history-section" aria-labelledby="history-heading">
+      <div class="history-header">
+        <div>
+          <h2 id="history-heading" class="section-title">
+            <span class="title-bullet"></span> Weight History
+          </h2>
+          <p class="section-desc">Chronological history with newest weigh-ins displayed first</p>
+        </div>
+        <div id="history-count-badge" class="badge">0 entries</div>
+      </div>
+
+      <!-- Responsive Table Wrapper -->
+      <div class="table-container">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Weight</th>
+              <th scope="col">Change</th>
+              <th scope="col" class="text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Dynamically populated by script.js -->
+          </tbody>
+        </table>
+
+        <!-- Empty state placeholder when no records exist -->
+        <div id="empty-history-message" class="empty-state hidden">
+          <div class="empty-icon">⚖️</div>
+          <h3>No weight records yet</h3>
+          <p>Use the form above to add your first weigh-in.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODALS SECTION -->
+    <!-- 1. Set or Reset Goal Weight Modal -->
+    <div id="goal-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="goal-modal-title">
+      <div class="modal-card">
+        <h3 id="goal-modal-title">🎯 Goal Weight Settings</h3>
+        <p class="modal-desc">Set or update your target weight. You can also clear/reset your goal completely.</p>
+        
+        <div class="form-group">
+          <label for="goal-weight-input">Target Goal Weight (kg)</label>
+          <div class="input-with-unit">
+            <input 
+              type="number" 
+              id="goal-weight-input" 
+              step="0.1" 
+              min="20" 
+              max="500" 
+              placeholder="e.g. 78.0"
+            >
+            <span class="unit-badge">kg</span>
+          </div>
+          <small class="helper-text" id="goal-imperial-hint">Accepts decimals (e.g. 78.5 kg)</small>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="btn-save-goal" class="btn btn-primary">
+            Save Goal
+          </button>
+          <button type="button" id="btn-clear-goal" class="btn btn-delete">
+            Reset / Clear Goal
+          </button>
+          <button type="button" id="btn-cancel-goal" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Update Height Modal (for BMI calculation) -->
+    <div id="height-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="height-modal-title">
+      <div class="modal-card">
+        <h3 id="height-modal-title">📊 Update Height for BMI</h3>
+        <p class="modal-desc">Enter your height in centimeters. This is used to compute your accurate Body Mass Index (BMI).</p>
+        
+        <div class="form-group">
+          <label for="height-input">Height (cm)</label>
+          <div class="input-with-unit">
+            <input 
+              type="number" 
+              id="height-input" 
+              step="1" 
+              min="100" 
+              max="250" 
+              placeholder="e.g. 175"
+            >
+            <span class="unit-badge">cm</span>
+          </div>
+          <small class="helper-text">Standard formula: weight (kg) / (height in meters)²</small>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="btn-save-height" class="btn btn-primary">
+            Save Height
+          </button>
+          <button type="button" id="btn-cancel-height" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Gym Weight Tracker &bull; Built with HTML, CSS, JavaScript &amp; JSON LocalStorage</p>
+    </footer>
+
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
