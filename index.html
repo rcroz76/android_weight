@@ -109,7 +109,87 @@
       </div>
     </section>
 
-    <!-- 1B. NUTRITION TARGETS & HEALTH METRICS (Calories, Protein, BMI & Goal Weight) -->
+    <!-- 1B. HEAVIEST WEIGHT & LIFETIME TRANSFORMATION SECTION -->
+    <section class="card heaviest-section" aria-labelledby="heaviest-heading">
+      <div class="heaviest-header">
+        <div class="heaviest-header-left">
+          <div class="card-icon icon-trophy" aria-hidden="true">🏆</div>
+          <div>
+            <div class="heaviest-badge-tag">Milestone Transformation</div>
+            <h2 id="heaviest-heading" class="section-title">
+              <span class="title-bullet"></span> Heaviest Weight Journey
+            </h2>
+            <p class="section-desc">23 stone 5 pounds was my heaviest weight &bull; Lifetime loss calculated from current weight</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="heaviest-cards-grid">
+        <!-- Card 1: Heaviest Weight Benchmark -->
+        <div class="heaviest-stat-card">
+          <div class="heaviest-card-top">
+            <span class="stat-pill pill-amber">⚡ Heaviest Weight</span>
+          </div>
+          <div class="heaviest-card-main">
+            <div class="heaviest-value">23 <span class="unit-text">st</span> 5 <span class="unit-text">lbs</span></div>
+            <div class="heaviest-subvalue">148.3 kg &bull; 327.0 lbs</div>
+          </div>
+          <div class="stat-subtext">All-time peak recorded bodyweight</div>
+        </div>
+
+        <!-- Card 2: Stone & Pounds Lost -->
+        <div class="heaviest-stat-card highlight-card">
+          <div class="heaviest-card-top">
+            <span class="stat-pill pill-green">📉 Stone &amp; Lbs Lost</span>
+          </div>
+          <div class="heaviest-card-main">
+            <div class="heaviest-value text-green" id="heaviest-lost-imperial">-- st -- lbs</div>
+            <div class="heaviest-subvalue text-green" id="heaviest-lost-lbs-total">-- lbs total loss</div>
+          </div>
+          <div class="stat-subtext">Total lost from 23 stone 5 lbs</div>
+        </div>
+
+        <!-- Card 3: Kilograms Lost -->
+        <div class="heaviest-stat-card highlight-card">
+          <div class="heaviest-card-top">
+            <span class="stat-pill pill-green">⚖️ Kilograms Lost</span>
+          </div>
+          <div class="heaviest-card-main">
+            <div class="heaviest-value text-green">
+              <span id="heaviest-lost-kg">--</span>
+              <span class="unit-text text-green">kg</span>
+            </div>
+            <div class="heaviest-subvalue text-green" id="heaviest-lost-percent">--% of peak weight lost</div>
+          </div>
+          <div class="stat-subtext">Total metric loss from 148.3 kg</div>
+        </div>
+
+        <!-- Card 4: Current vs Heaviest Comparison -->
+        <div class="heaviest-stat-card">
+          <div class="heaviest-card-top">
+            <span class="stat-pill pill-cyan">🎯 Current vs Peak</span>
+          </div>
+          <div class="heaviest-card-main">
+            <div class="heaviest-value">
+              <span id="heaviest-current-kg">--</span>
+              <span class="unit-text">kg</span>
+            </div>
+            <div class="heaviest-subvalue" id="heaviest-current-imperial">-- st -- lbs</div>
+          </div>
+          <div class="heaviest-progress-container">
+            <div class="heaviest-progress-bar-bg">
+              <div id="heaviest-progress-bar-fill" class="heaviest-progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="heaviest-progress-labels">
+              <span>Peak: 23 st 5 lbs</span>
+              <span id="heaviest-progress-text">0% lost</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1C. NUTRITION TARGETS & HEALTH METRICS (Calories, Protein, BMI & Goal Weight) -->
     <section class="targets-section" aria-label="Daily Nutrition and Health Metrics">
       
       <!-- Daily Calories Card (Current Pounds × 12) -->

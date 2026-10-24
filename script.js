@@ -93,6 +93,24 @@ const heightInput = document.getElementById('height-input');
 const btnSaveHeight = document.getElementById('btn-save-height');
 const btnCancelHeight = document.getElementById('btn-cancel-height');
 
+// Heaviest Weight Milestone Elements (23 stone 5 pounds benchmark)
+const heaviestLostImperial = document.getElementById('heaviest-lost-imperial');
+const heaviestLostLbsTotal = document.getElementById('heaviest-lost-lbs-total');
+const heaviestLostKg = document.getElementById('heaviest-lost-kg');
+const heaviestLostPercent = document.getElementById('heaviest-lost-percent');
+const heaviestCurrentKg = document.getElementById('heaviest-current-kg');
+const heaviestCurrentImperial = document.getElementById('heaviest-current-imperial');
+const heaviestProgressBarFill = document.getElementById('heaviest-progress-bar-fill');
+const heaviestProgressText = document.getElementById('heaviest-progress-text');
+
+// Heaviest weight constants
+// 23 stone 5 pounds = (23 * 14) + 5 = 327 pounds
+// 327 lbs in kg = 327 * 0.45359237 kg = 148.32470499 kg (standard exact conversion)
+const HEAVIEST_WEIGHT_STONE = 23;
+const HEAVIEST_WEIGHT_LBS_PART = 5;
+const HEAVIEST_TOTAL_LBS = (HEAVIEST_WEIGHT_STONE * 14) + HEAVIEST_WEIGHT_LBS_PART; // 327 lbs
+const HEAVIEST_WEIGHT_KG = HEAVIEST_TOTAL_LBS * 0.45359237; // ~148.32 kg
+
 // History Table Elements
 const historyTbody = document.getElementById('history-tbody');
 const emptyHistoryMessage = document.getElementById('empty-history-message');
@@ -490,6 +508,7 @@ function renderDashboardSummary() {
     bmiBadge.classList.add('hidden');
     statGoalSubtext.textContent = goalWeightKg ? `Goal: ${goalWeightKg} kg` : 'No goal set';
     goalProgressBar.style.width = '0%';
+    renderHeaviestWeightSection(null);
     return;
   }
 
@@ -602,6 +621,74 @@ function renderDashboardSummary() {
     statGoalWeight.textContent = '--';
     statGoalSubtext.textContent = 'No goal set — click to set';
     goalProgressBar.style.width = '0%';
+  }
+
+  // 8. Heaviest Weight Transformation Section (23 stone 5 pounds benchmark)
+  renderHeaviestWeightSection(currentKg);
+}
+
+/**
+ * 1B. Render Heaviest Weight Transformation Section:
+ * Benchmark: 23 stone 5 pounds (327 lbs / 148.32 kg) was the user's heaviest weight.
+ * Compares current weight to compute:
+ * - Stone and pounds lost
+ * - Kilograms lost
+ * - Total imperial pounds lost
+ * - Percentage of peak body weight lost
+ * 
+ * @param {number|null} currentKg - Current body weight in kilograms
+ */
+function renderHeaviestWeightSection(currentKg) {
+  if (!heaviestLostImperial || !heaviestLostKg) return;
+
+  if (currentKg === null || currentKg === undefined || isNaN(currentKg) || currentKg <= 0) {
+    heaviestLostImperial.textContent = '-- st -- lbs';
+    heaviestLostLbsTotal.textContent = '-- lbs total loss';
+    heaviestLostKg.textContent = '--';
+    heaviestLostPercent.textContent = '--% of peak weight lost';
+    heaviestCurrentKg.textContent = '--';
+    heaviestCurrentImperial.textContent = '-- st -- lbs';
+    if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = '0%';
+    if (heaviestProgressText) heaviestProgressText.textContent = '0% lost';
+    return;
+  }
+
+  // Current weight imperial representation
+  const currentLbs = kgToPounds(currentKg);
+  heaviestCurrentKg.textContent = currentKg.toFixed(1);
+  heaviestCurrentImperial.textContent = kgToStoneAndPounds(currentKg);
+
+  // Weight lost calculation from heaviest weight (23 stone 5 lbs = 327 lbs, ~148.32 kg)
+  const lbsLost = HEAVIEST_TOTAL_LBS - currentLbs;
+  const kgLost = Number((HEAVIEST_WEIGHT_KG - currentKg).toFixed(1));
+
+  let stonesLost = Math.floor(Math.abs(lbsLost) / 14);
+  let remLbsLost = Number((Math.abs(lbsLost) % 14).toFixed(1));
+
+  if (remLbsLost >= 14) {
+    stonesLost += 1;
+    remLbsLost = 0;
+  }
+
+  if (lbsLost >= 0) {
+    // Normal case: user has lost weight from peak 23 stone 5 pounds!
+    heaviestLostImperial.textContent = `${stonesLost} st ${remLbsLost} lbs lost`;
+    heaviestLostLbsTotal.textContent = `${lbsLost.toFixed(1)} lbs total loss`;
+    heaviestLostKg.textContent = `${kgLost.toFixed(1)}`;
+
+    const percentLost = Math.min(100, Math.max(0, (lbsLost / HEAVIEST_TOTAL_LBS) * 100));
+    heaviestLostPercent.textContent = `${percentLost.toFixed(1)}% of peak weight lost`;
+    if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = `${percentLost.toFixed(1)}%`;
+    if (heaviestProgressText) heaviestProgressText.textContent = `${percentLost.toFixed(1)}% lost (${stonesLost} st ${remLbsLost} lbs)`;
+  } else {
+    // Edge case: current weight is above peak
+    const overKg = Math.abs(kgLost).toFixed(1);
+    heaviestLostImperial.textContent = `+${stonesLost} st ${remLbsLost} lbs`;
+    heaviestLostLbsTotal.textContent = `${Math.abs(lbsLost).toFixed(1)} lbs above peak`;
+    heaviestLostKg.textContent = `+${overKg}`;
+    heaviestLostPercent.textContent = `Above peak weight`;
+    if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = '0%';
+    if (heaviestProgressText) heaviestProgressText.textContent = '0% lost';
   }
 }
 
