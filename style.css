@@ -883,9 +883,51 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .chart-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timeframe-selector {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+
+.btn-timeframe {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.btn-timeframe:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-timeframe.active {
+  background: var(--accent-green);
+  color: #0a0e17;
+  font-weight: 700;
+  box-shadow: 0 0 10px var(--accent-green-glow);
 }
 
 .chart-legend {
@@ -1146,6 +1188,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   .form-actions {
     flex-direction: column;
+  }
+
+  .chart-controls {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .history-table th, 

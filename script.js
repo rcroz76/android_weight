@@ -21,6 +21,7 @@
 const STORAGE_KEY = 'gym_weight_tracker_data';
 const GOAL_STORAGE_KEY = 'gym_goal_weight_kg';
 const HEIGHT_STORAGE_KEY = 'gym_user_height_cm';
+const TIMEFRAME_STORAGE_KEY = 'gym_chart_timeframe';
 
 // Default example data matching weights.json (used as initial sample data)
 const SAMPLE_WEIGHTS = [
@@ -36,6 +37,7 @@ let weightRecords = [];
 // User preferences / targets state
 let goalWeightKg = null;
 let userHeightCm = 175; // default 175 cm
+let currentChartTimeframe = 'all'; // 'all', '3m', '1m'
 
 /* ============================================================================
    DOM ELEMENT REFERENCES
@@ -120,6 +122,8 @@ const historyCountBadge = document.getElementById('history-count-badge');
 // Canvas Chart Elements
 const chartCanvas = document.getElementById('weight-chart');
 const chartEmptyState = document.getElementById('chart-empty-state');
+const chartEmptyText = document.getElementById('chart-empty-text');
+const timeframeButtons = document.querySelectorAll('.btn-timeframe');
 
 
 /* ============================================================================
@@ -378,7 +382,13 @@ async function loadInitialData() {
     localStorage.setItem(HEIGHT_STORAGE_KEY, '175');
   }
 
-  // 3. Load weight records
+  // 3. Load saved chart timeframe ('all', '3m', '1m')
+  const savedTimeframe = localStorage.getItem(TIMEFRAME_STORAGE_KEY);
+  if (savedTimeframe && ['all', '3m', '1m'].includes(savedTimeframe)) {
+    currentChartTimeframe = savedTimeframe;
+  }
+
+  // 4. Load weight records
   const storedJson = localStorage.getItem(STORAGE_KEY);
 
   if (storedJson) {
@@ -807,15 +817,69 @@ function renderHistoryTable() {
 }
 
 /**
+ * Filters chronological weight records by selected timeframe ('all', '3m', '1m').
+ * 
+ * - 'all': All recorded weigh-ins.
+ * - '3m': Weigh-ins within the last 3 months.
+ * - '1m': Weigh-ins within the last 1 month.
+ * 
+ * @param {Array} records - Array of { date: string, weight: number } in chronological order
+ * @param {string} timeframe - 'all' | '3m' | '1m'
+ * @returns {Array} - Filtered records
+ */
+function filterRecordsByTimeframe(records, timeframe) {
+  if (!Array.isArray(records) || records.length === 0) return [];
+  if (timeframe === 'all' || !timeframe) return [...records];
+
+  const latestRecordDate = new Date(records[records.length - 1].date + 'T23:59:59');
+  const today = new Date();
+  
+  // Use today if the latest record is relatively current (within 60 days); otherwise anchor to latest record date
+  const diffDays = Math.abs((today - latestRecordDate) / (1000 * 60 * 60 * 24));
+  const anchorDate = (diffDays <= 60 && today >= latestRecordDate) ? today : latestRecordDate;
+
+  const cutoff = new Date(anchorDate);
+  if (timeframe === '1m') {
+    cutoff.setMonth(cutoff.getMonth() - 1);
+  } else if (timeframe === '3m') {
+    cutoff.setMonth(cutoff.getMonth() - 3);
+  }
+
+  const y = cutoff.getFullYear();
+  const m = String(cutoff.getMonth() + 1).padStart(2, '0');
+  const d = String(cutoff.getDate()).padStart(2, '0');
+  const cutoffStr = `${y}-${m}-${d}`;
+
+  return records.filter(item => item.date >= cutoffStr);
+}
+
+/**
  * 3. Render Progress Graph (Canvas Line Chart):
- * Draws Weight (kg) over time on a high-DPI responsive canvas.
+ * Draws Weight (kg) over time on a high-DPI responsive canvas,
+ * filtered by the user's selected timeframe ('all', '3m', '1m').
  */
 function renderProgressChart() {
-  const chrono = getChronologicalRecords();
+  const allChrono = getChronologicalRecords();
+  const chrono = filterRecordsByTimeframe(allChrono, currentChartTimeframe);
+
+  // Synchronize timeframe button active classes
+  if (timeframeButtons && timeframeButtons.length > 0) {
+    timeframeButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-timeframe') === currentChartTimeframe);
+    });
+  }
 
   if (chrono.length < 2) {
     chartCanvas.style.display = 'none';
     chartEmptyState.classList.remove('hidden');
+    if (chartEmptyText) {
+      if (allChrono.length < 2) {
+        chartEmptyText.textContent = 'Log at least two weigh-ins to generate the progress graph.';
+      } else {
+        const tfLabel = currentChartTimeframe === '1m' ? '1 Month' : '3 Months';
+        chartEmptyText.textContent = `Not enough weigh-ins recorded in the last ${tfLabel}. Select "All" to view your full history.`;
+      }
+    }
     return;
   }
 
@@ -1268,7 +1332,26 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProgressChart();
   });
 
-  // 6. Load data from localStorage (or weights.json fallback) and render UI
+  // 6. Timeframe filter buttons ('All', '3 Months', '1 Month')
+  if (timeframeButtons && timeframeButtons.length > 0) {
+    timeframeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tf = btn.getAttribute('data-timeframe');
+        if (!tf || tf === currentChartTimeframe) return;
+
+        currentChartTimeframe = tf;
+        localStorage.setItem(TIMEFRAME_STORAGE_KEY, tf);
+
+        timeframeButtons.forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-timeframe') === tf);
+        });
+
+        renderProgressChart();
+      });
+    });
+  }
+
+  // 7. Load data from localStorage (or weights.json fallback) and render UI
   loadInitialData();
 });
 
