@@ -526,6 +526,183 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   4C. Heaviest Weight Transformation Section
+   -------------------------------------------------------------------------- */
+.heaviest-section {
+  background: linear-gradient(145deg, #162038, #111828);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  box-shadow: var(--shadow-card), 0 0 25px rgba(16, 185, 129, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.heaviest-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-amber), var(--accent-green), var(--accent-cyan));
+}
+
+.heaviest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.heaviest-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-trophy {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24;
+}
+
+.heaviest-badge-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-bottom: 4px;
+}
+
+.heaviest-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.heaviest-stat-card {
+  background: rgba(14, 20, 36, 0.75);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.heaviest-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.heaviest-stat-card.highlight-card {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.08), rgba(14, 20, 36, 0.85));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.heaviest-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.pill-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.pill-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.pill-cyan {
+  background: rgba(6, 182, 212, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+.heaviest-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heaviest-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.unit-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.text-green {
+  color: #34d399 !important;
+}
+
+.heaviest-subvalue {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.heaviest-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.heaviest-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.heaviest-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+.heaviest-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
    5. Main Dashboard Grid (Form + Chart)
    -------------------------------------------------------------------------- */
 .dashboard-grid {
@@ -961,7 +1138,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
   .summary-section,
-  .targets-section {
+  .targets-section,
+  .heaviest-cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -976,7 +1154,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 
   .summary-section,
-  .targets-section {
+  .targets-section,
+  .heaviest-cards-grid {
     grid-template-columns: 1fr;
   }
 
