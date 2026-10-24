@@ -354,6 +354,11 @@ body {
   background: var(--bg-card);
 }
 
+.target-card .card-value {
+  font-size: 1.45rem;
+  white-space: nowrap;
+}
+
 .icon-fire {
   background: rgba(249, 115, 22, 0.14) !important;
 }
@@ -534,6 +539,7 @@ body {
   box-shadow: var(--shadow-card), 0 0 25px rgba(16, 185, 129, 0.1);
   position: relative;
   overflow: hidden;
+  padding: 18px 20px;
 }
 
 .heaviest-section::before {
@@ -544,40 +550,6 @@ body {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--accent-amber), var(--accent-green), var(--accent-cyan));
-}
-
-.heaviest-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.heaviest-header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.icon-trophy {
-  background: rgba(245, 158, 11, 0.15) !important;
-  color: #fbbf24;
-}
-
-.heaviest-badge-tag {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #fbbf24;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  margin-bottom: 4px;
 }
 
 .heaviest-cards-grid {

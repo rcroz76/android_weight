@@ -288,15 +288,18 @@ function calculateDailyCalories(lbs) {
 }
 
 /**
- * Calculates total daily protein in grams from bodyweight in pounds.
- * User requirement: current pounds × 1 (1g per lb of bodyweight)
+ * Calculates daily protein target range in grams from bodyweight in pounds.
+ * User requirement: range from 0.7g to 1.0g per lb of bodyweight.
  * 
  * @param {number} lbs - Weight in pounds
- * @returns {number} - Total protein in grams
+ * @returns {{ min: number, max: number }} - Range of protein in grams
  */
 function calculateDailyProtein(lbs) {
-  if (!lbs || lbs <= 0) return 0;
-  return Math.round(lbs * 1);
+  if (!lbs || lbs <= 0) return { min: 0, max: 0 };
+  return {
+    min: Math.round(lbs * 0.7),
+    max: Math.round(lbs * 1.0)
+  };
 }
 
 /**
@@ -503,7 +506,7 @@ function renderDashboardSummary() {
     targetCalories.textContent = '--';
     targetCaloriesSubtext.textContent = '(Current lbs × 12) - 500';
     targetProtein.textContent = '--';
-    targetProteinSubtext.textContent = 'Current lbs × 1g';
+    targetProteinSubtext.textContent = 'Current lbs × 0.7g – 1g';
     statBmi.textContent = '--';
     bmiBadge.classList.add('hidden');
     statGoalSubtext.textContent = goalWeightKg ? `Goal: ${goalWeightKg} kg` : 'No goal set';
@@ -570,10 +573,10 @@ function renderDashboardSummary() {
   targetCalories.textContent = dailyCalories.toLocaleString();
   targetCaloriesSubtext.textContent = `(${currentLbs.toFixed(1)} lbs × 12) - 500 kcal`;
 
-  // 5. Daily Protein Target (Formula requested: current pounds × 1)
-  const dailyProtein = calculateDailyProtein(currentLbs);
-  targetProtein.textContent = dailyProtein.toLocaleString();
-  targetProteinSubtext.textContent = `${currentLbs.toFixed(1)} lbs × 1g`;
+  // 5. Daily Protein Target Range (0.7g – 1.0g per lb of bodyweight)
+  const proteinRange = calculateDailyProtein(currentLbs);
+  targetProtein.textContent = `${proteinRange.min} – ${proteinRange.max}`;
+  targetProteinSubtext.textContent = `${currentLbs.toFixed(1)} lbs × 0.7g – 1.0g`;
 
   // 6. BMI (Body Mass Index) Calculation
   statHeightDisplay.textContent = `Height: ${userHeightCm} cm`;
