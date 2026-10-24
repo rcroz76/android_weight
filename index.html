@@ -312,9 +312,17 @@
             </h2>
             <p class="section-desc">Weight (kg) over time</p>
           </div>
-          <div class="chart-legend">
-            <span class="legend-dot"></span>
-            <span>Body Weight (kg)</span>
+          <div class="chart-controls">
+            <!-- Timeframe Filter Buttons (All, 3 Months, 1 Month) -->
+            <div class="timeframe-selector" role="group" aria-label="Graph Timeframe Filter">
+              <button type="button" class="btn-timeframe active" data-timeframe="all">All</button>
+              <button type="button" class="btn-timeframe" data-timeframe="3m">3 Months</button>
+              <button type="button" class="btn-timeframe" data-timeframe="1m">1 Month</button>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-dot"></span>
+              <span>Body Weight (kg)</span>
+            </div>
           </div>
         </div>
 
@@ -323,7 +331,7 @@
           <canvas id="weight-chart" height="260"></canvas>
           <!-- Empty State overlay when less than 2 points are logged -->
           <div id="chart-empty-state" class="chart-empty hidden">
-            <p>Log at least two weigh-ins to generate the progress graph.</p>
+            <p id="chart-empty-text">Log at least two weigh-ins to generate the progress graph.</p>
           </div>
         </div>
       </section>
