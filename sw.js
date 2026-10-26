@@ -11,7 +11,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'weight-tracker-v5';
+const CACHE_NAME = 'weight-tracker-v7';
 
 // Static assets to pre-cache on install
 const STATIC_ASSETS = [

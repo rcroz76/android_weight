@@ -125,6 +125,19 @@ const chartEmptyState = document.getElementById('chart-empty-state');
 const chartEmptyText = document.getElementById('chart-empty-text');
 const timeframeButtons = document.querySelectorAll('.btn-timeframe');
 
+// Goal Gauge Chart Elements
+const gaugeBadgeStatus = document.getElementById('gauge-badge-status');
+const gaugeFillArc = document.getElementById('gauge-fill-arc');
+const gaugePercentDisplay = document.getElementById('gauge-percent-display');
+const gaugeSubtitleDisplay = document.getElementById('gauge-subtitle-display');
+const gaugeStartWeight = document.getElementById('gauge-start-weight');
+const gaugeStartSub = document.getElementById('gauge-start-sub');
+const gaugeCurrentWeight = document.getElementById('gauge-current-weight');
+const gaugeCurrentSub = document.getElementById('gauge-current-sub');
+const gaugeGoalWeight = document.getElementById('gauge-goal-weight');
+const gaugeGoalSub = document.getElementById('gauge-goal-sub');
+const gaugeDetailMsg = document.getElementById('gauge-detail-msg');
+
 
 /* ============================================================================
    DATE HELPER FUNCTIONS
@@ -483,6 +496,7 @@ function updateUI() {
   renderDashboardSummary();
   renderHistoryTable();
   renderProgressChart();
+  renderGoalGaugeChart();
 }
 
 /**
@@ -1055,6 +1069,156 @@ function renderProgressChart() {
     ctx.fillStyle = '#94a3b8';
     ctx.fillText(formatShortDate(item.date), x, height - padding.bottom + 18);
   });
+}
+
+/**
+ * 3B. Render Target Goal Gauge Chart:
+ * A compact semi-circle gauge showing progress towards target weight from starting weight.
+ */
+function renderGoalGaugeChart() {
+  if (!gaugeFillArc || !gaugePercentDisplay) return;
+
+  const GAUGE_CIRCUMFERENCE = 235.62; // Math.PI * 75
+  const chrono = getChronologicalRecords();
+
+  if (chrono.length === 0) {
+    gaugeFillArc.style.strokeDashoffset = GAUGE_CIRCUMFERENCE.toString();
+    gaugePercentDisplay.textContent = '--%';
+    if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'no data';
+    if (gaugeBadgeStatus) {
+      gaugeBadgeStatus.textContent = 'No Weigh-ins';
+      gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
+    }
+    if (gaugeStartWeight) gaugeStartWeight.textContent = '-- kg';
+    if (gaugeStartSub) gaugeStartSub.textContent = '-- st -- lbs';
+    if (gaugeCurrentWeight) gaugeCurrentWeight.textContent = '-- kg';
+    if (gaugeCurrentSub) gaugeCurrentSub.textContent = '-- st -- lbs';
+    if (gaugeGoalWeight) gaugeGoalWeight.textContent = '-- kg';
+    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs';
+    if (gaugeDetailMsg) gaugeDetailMsg.textContent = 'Log your weigh-ins to track progress against your goal weight.';
+    return;
+  }
+
+  const firstRecord = chrono[0];
+  const latestRecord = chrono[chrono.length - 1];
+  const startKg = firstRecord.weight;
+  const currentKg = latestRecord.weight;
+
+  if (gaugeStartWeight) gaugeStartWeight.textContent = `${startKg.toFixed(1)} kg`;
+  if (gaugeStartSub) gaugeStartSub.textContent = kgToStoneAndPounds(startKg);
+  if (gaugeCurrentWeight) gaugeCurrentWeight.textContent = `${currentKg.toFixed(1)} kg`;
+  if (gaugeCurrentSub) gaugeCurrentSub.textContent = kgToStoneAndPounds(currentKg);
+
+  if (goalWeightKg === null) {
+    gaugeFillArc.style.strokeDashoffset = GAUGE_CIRCUMFERENCE.toString();
+    gaugePercentDisplay.textContent = '--%';
+    if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'no goal';
+    if (gaugeBadgeStatus) {
+      gaugeBadgeStatus.textContent = 'No Goal Set';
+      gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
+    }
+    if (gaugeGoalWeight) gaugeGoalWeight.textContent = '-- kg';
+    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs';
+    if (gaugeDetailMsg) gaugeDetailMsg.textContent = 'No goal weight set. Click "Reset Goal" above to configure your target.';
+    return;
+  }
+
+  const goalKg = goalWeightKg;
+  if (gaugeGoalWeight) gaugeGoalWeight.textContent = `${goalKg.toFixed(1)} kg`;
+  if (gaugeGoalSub) gaugeGoalSub.textContent = kgToStoneAndPounds(goalKg);
+
+  const targetDelta = Math.abs(startKg - goalKg);
+  const isLossGoal = startKg >= goalKg;
+  let percentAchieved = 0;
+
+  if (isLossGoal) {
+    if (currentKg <= goalKg) {
+      percentAchieved = 100;
+      gaugePercentDisplay.textContent = '100%';
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'goal reached';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = 'Goal Reached! 🏆';
+        gaugeBadgeStatus.className = 'badge-gauge badge-success';
+      }
+      const totalLost = (startKg - currentKg).toFixed(1);
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `Goal reached! You have lost ${totalLost} kg (${kgToStoneAndPounds(startKg - currentKg)}) since starting.`;
+      }
+    } else if (currentKg >= startKg) {
+      percentAchieved = 0;
+      gaugePercentDisplay.textContent = '0%';
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = 'Starting Point';
+        gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
+      }
+      const toGoal = (currentKg - goalKg).toFixed(1);
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `${toGoal} kg (${kgToStoneAndPounds(currentKg - goalKg)}) remaining to reach your ${goalKg} kg target.`;
+      }
+    } else {
+      const lost = startKg - currentKg;
+      percentAchieved = targetDelta > 0 ? Math.round((lost / targetDelta) * 100) : 100;
+      percentAchieved = Math.max(0, Math.min(100, percentAchieved));
+      const remainingKg = (currentKg - goalKg).toFixed(1);
+
+      gaugePercentDisplay.textContent = `${percentAchieved}%`;
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = `${percentAchieved}% Progress`;
+        gaugeBadgeStatus.className = 'badge-gauge badge-active';
+      }
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `${lost.toFixed(1)} kg lost so far \u2022 ${remainingKg} kg (${kgToStoneAndPounds(currentKg - goalKg)}) remaining to goal`;
+      }
+    }
+  } else {
+    // Weight Gain Goal
+    if (currentKg >= goalKg) {
+      percentAchieved = 100;
+      gaugePercentDisplay.textContent = '100%';
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'goal reached';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = 'Goal Reached! 🏆';
+        gaugeBadgeStatus.className = 'badge-gauge badge-success';
+      }
+      const totalGained = (currentKg - startKg).toFixed(1);
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `Goal reached! You have gained ${totalGained} kg (${kgToStoneAndPounds(currentKg - startKg)}) since starting.`;
+      }
+    } else if (currentKg <= startKg) {
+      percentAchieved = 0;
+      gaugePercentDisplay.textContent = '0%';
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = 'Starting Point';
+        gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
+      }
+      const toGoal = (goalKg - currentKg).toFixed(1);
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `${toGoal} kg (${kgToStoneAndPounds(goalKg - currentKg)}) remaining to reach your ${goalKg} kg target.`;
+      }
+    } else {
+      const gained = currentKg - startKg;
+      percentAchieved = targetDelta > 0 ? Math.round((gained / targetDelta) * 100) : 100;
+      percentAchieved = Math.max(0, Math.min(100, percentAchieved));
+      const remainingKg = (goalKg - currentKg).toFixed(1);
+
+      gaugePercentDisplay.textContent = `${percentAchieved}%`;
+      if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
+      if (gaugeBadgeStatus) {
+        gaugeBadgeStatus.textContent = `${percentAchieved}% Progress`;
+        gaugeBadgeStatus.className = 'badge-gauge badge-active';
+      }
+      if (gaugeDetailMsg) {
+        gaugeDetailMsg.textContent = `${gained.toFixed(1)} kg gained so far \u2022 ${remainingKg} kg (${kgToStoneAndPounds(goalKg - currentKg)}) remaining to goal`;
+      }
+    }
+  }
+
+  // Update SVG Arc strokeDashoffset
+  const offset = GAUGE_CIRCUMFERENCE * (1 - (percentAchieved / 100));
+  gaugeFillArc.style.strokeDashoffset = offset.toFixed(2);
 }
 
 
