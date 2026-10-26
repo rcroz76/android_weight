@@ -244,6 +244,67 @@
 
     </section>
 
+    <!-- 1D. TARGET GOAL GAUGE SECTION -->
+    <section class="card goal-gauge-section" aria-labelledby="goal-gauge-heading">
+      <div class="gauge-card-header">
+        <h2 id="goal-gauge-heading" class="section-title">
+          <span class="title-bullet"></span> Goal Progress
+        </h2>
+        <span id="gauge-badge-status" class="badge-gauge badge-neutral">In Progress</span>
+      </div>
+
+      <div class="gauge-wrapper">
+        <!-- SVG Semi-Circle Radial Gauge -->
+        <div class="gauge-chart-container">
+          <svg class="gauge-svg" viewBox="0 0 200 115" aria-hidden="true">
+            <defs>
+              <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#06b6d4" />
+                <stop offset="60%" stop-color="#10b981" />
+                <stop offset="100%" stop-color="#34d399" />
+              </linearGradient>
+            </defs>
+            <!-- Background Track -->
+            <path class="gauge-track" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="14" stroke-linecap="round" />
+            <!-- Active Progress Arc -->
+            <path id="gauge-fill-arc" class="gauge-fill" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.62" stroke-dashoffset="235.62" />
+          </svg>
+
+          <!-- Gauge Center Readout -->
+          <div class="gauge-readout">
+            <div id="gauge-percent-display" class="gauge-percent">0%</div>
+            <div id="gauge-subtitle-display" class="gauge-subtitle">to goal</div>
+          </div>
+        </div>
+
+        <!-- Gauge Endpoints and Key Milestones -->
+        <div class="gauge-meta-row">
+          <div class="gauge-meta-col start-col">
+            <span class="meta-label">🏁 Start</span>
+            <span id="gauge-start-weight" class="meta-val">-- kg</span>
+            <span id="gauge-start-sub" class="meta-sub">-- st -- lbs</span>
+          </div>
+
+          <div class="gauge-meta-col current-col">
+            <span class="meta-label">⚡ Current</span>
+            <span id="gauge-current-weight" class="meta-val">-- kg</span>
+            <span id="gauge-current-sub" class="meta-sub">-- st -- lbs</span>
+          </div>
+
+          <div class="gauge-meta-col goal-col">
+            <span class="meta-label">🎯 Target</span>
+            <span id="gauge-goal-weight" class="meta-val">-- kg</span>
+            <span id="gauge-goal-sub" class="meta-sub">-- st -- lbs</span>
+          </div>
+        </div>
+
+        <!-- Detailed Progress Message -->
+        <div id="gauge-detail-msg" class="gauge-detail-bar">
+          0.0 kg lost from starting weight &bull; 0.0 kg remaining to target
+        </div>
+      </div>
+    </section>
+
     <!-- Main Workspace Grid: Log Weight Form and Progress Graph -->
     <main class="dashboard-grid">
 
