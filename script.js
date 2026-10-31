@@ -1219,7 +1219,7 @@ function renderMilestones(currentKg) {
       <div class="milestone-step-top">
         <div class="milestone-step-title-wrap">
           <span class="step-badge" aria-hidden="true">${icon}</span>
-          <div>
+          <div class="milestone-step-text-wrap">
             <div class="step-name">${m.title}</div>
             <div class="step-target-loss">${reqLossText}</div>
           </div>
