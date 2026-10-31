@@ -546,6 +546,7 @@ function updateUI() {
   renderHistoryTable();
   renderProgressChart();
   renderGoalGaugeChart();
+  renderMilestones();
 }
 
 /**
@@ -709,6 +710,7 @@ function renderDashboardSummary() {
 
   // 8. Heaviest Weight Transformation Section (23 stone 5 pounds benchmark)
   renderHeaviestWeightSection(currentKg);
+  renderMilestones(currentKg);
 }
 
 /**
@@ -774,6 +776,492 @@ function renderHeaviestWeightSection(currentKg) {
     if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = '0%';
     if (heaviestProgressText) heaviestProgressText.textContent = '0% lost';
   }
+}
+
+/**
+ * ============================================================================
+ * ACCURATE LIFETIME TRANSFORMATION MILESTONES CONFIGURATION
+ * ============================================================================
+ * Benchmark: 23 stone 5 pounds (327.0 lbs / 148.3247 kg).
+ * 
+ * Accurately tracks the user's specific milestone requirements:
+ * 1. Lost stone from 1 to 10 (10 milestones)
+ * 2. Achieving 20 stone, 18 stone, 17 stone, 16 stone, 15 stone, 14 stone, 13 stone (7 milestones)
+ * 3. Lost 20 kg, 30 kg, 40 kg and 50 kg (4 milestones)
+ * (All other milestones removed)
+ */
+const MILESTONES_CONFIG = [
+  // 1. Lost stone from 1 to 10
+  // Measured on how much weight is lost from peak 23 st 5 lbs (327.0 lbs)
+  {
+    id: 'lost-1-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 1,
+    title: 'Lost 1 Stone',
+    reqLossLbs: 14,
+    reqLossStoneDesc: '1 st 0 lbs lost',
+    reqLossKg: 14 * 0.45359237,
+    scaleWeightLbs: 327 - 14,
+    scaleWeightStoneDesc: '22 st 5 lbs'
+  },
+  {
+    id: 'lost-2-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 2,
+    title: 'Lost 2 Stone',
+    reqLossLbs: 28,
+    reqLossStoneDesc: '2 st 0 lbs lost',
+    reqLossKg: 28 * 0.45359237,
+    scaleWeightLbs: 327 - 28,
+    scaleWeightStoneDesc: '21 st 5 lbs'
+  },
+  {
+    id: 'lost-3-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 3,
+    title: 'Lost 3 Stone',
+    reqLossLbs: 42,
+    reqLossStoneDesc: '3 st 0 lbs lost',
+    reqLossKg: 42 * 0.45359237,
+    scaleWeightLbs: 327 - 42,
+    scaleWeightStoneDesc: '20 st 5 lbs'
+  },
+  {
+    id: 'lost-4-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 4,
+    title: 'Lost 4 Stone',
+    reqLossLbs: 56,
+    reqLossStoneDesc: '4 st 0 lbs lost',
+    reqLossKg: 56 * 0.45359237,
+    scaleWeightLbs: 327 - 56,
+    scaleWeightStoneDesc: '19 st 5 lbs'
+  },
+  {
+    id: 'lost-5-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 5,
+    title: 'Lost 5 Stone',
+    reqLossLbs: 70,
+    reqLossStoneDesc: '5 st 0 lbs lost',
+    reqLossKg: 70 * 0.45359237,
+    scaleWeightLbs: 327 - 70,
+    scaleWeightStoneDesc: '18 st 5 lbs'
+  },
+  {
+    id: 'lost-6-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 6,
+    title: 'Lost 6 Stone',
+    reqLossLbs: 84,
+    reqLossStoneDesc: '6 st 0 lbs lost',
+    reqLossKg: 84 * 0.45359237,
+    scaleWeightLbs: 327 - 84,
+    scaleWeightStoneDesc: '17 st 5 lbs'
+  },
+  {
+    id: 'lost-7-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 7,
+    title: 'Lost 7 Stone',
+    reqLossLbs: 98,
+    reqLossStoneDesc: '7 st 0 lbs lost',
+    reqLossKg: 98 * 0.45359237,
+    scaleWeightLbs: 327 - 98,
+    scaleWeightStoneDesc: '16 st 5 lbs'
+  },
+  {
+    id: 'lost-8-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 8,
+    title: 'Lost 8 Stone',
+    reqLossLbs: 112,
+    reqLossStoneDesc: '8 st 0 lbs lost',
+    reqLossKg: 112 * 0.45359237,
+    scaleWeightLbs: 327 - 112,
+    scaleWeightStoneDesc: '15 st 5 lbs'
+  },
+  {
+    id: 'lost-9-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 9,
+    title: 'Lost 9 Stone',
+    reqLossLbs: 126,
+    reqLossStoneDesc: '9 st 0 lbs lost',
+    reqLossKg: 126 * 0.45359237,
+    scaleWeightLbs: 327 - 126,
+    scaleWeightStoneDesc: '14 st 5 lbs'
+  },
+  {
+    id: 'lost-10-st',
+    category: 'stone-lost',
+    type: 'stone_lost',
+    stoneVal: 10,
+    title: 'Lost 10 Stone',
+    reqLossLbs: 140,
+    reqLossStoneDesc: '10 st 0 lbs lost',
+    reqLossKg: 140 * 0.45359237,
+    scaleWeightLbs: 327 - 140,
+    scaleWeightStoneDesc: '13 st 5 lbs'
+  },
+
+  // 2. Achieving milestone weights: 20, 18, 17, 16, 15, 14, 13 stone
+  // Measured on loss from heaviest weight (23 st 5 lbs = 327 lbs)
+  {
+    id: 'reach-20-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 20,
+    title: 'Achieving 20 Stone',
+    reqLossLbs: 327 - (20 * 14), // 47.0 lbs
+    reqLossStoneDesc: '3 st 5 lbs lost',
+    reqLossKg: (327 - (20 * 14)) * 0.45359237, // 21.3 kg
+    scaleWeightLbs: 20 * 14, // 280 lbs
+    scaleWeightStoneDesc: '20 st 0 lbs'
+  },
+  {
+    id: 'reach-18-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 18,
+    title: 'Achieving 18 Stone',
+    reqLossLbs: 327 - (18 * 14), // 75.0 lbs
+    reqLossStoneDesc: '5 st 5 lbs lost',
+    reqLossKg: (327 - (18 * 14)) * 0.45359237, // 34.0 kg
+    scaleWeightLbs: 18 * 14, // 252 lbs
+    scaleWeightStoneDesc: '18 st 0 lbs'
+  },
+  {
+    id: 'reach-17-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 17,
+    title: 'Achieving 17 Stone',
+    reqLossLbs: 327 - (17 * 14), // 89.0 lbs
+    reqLossStoneDesc: '6 st 5 lbs lost',
+    reqLossKg: (327 - (17 * 14)) * 0.45359237, // 40.4 kg
+    scaleWeightLbs: 17 * 14, // 238 lbs
+    scaleWeightStoneDesc: '17 st 0 lbs'
+  },
+  {
+    id: 'reach-16-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 16,
+    title: 'Achieving 16 Stone',
+    reqLossLbs: 327 - (16 * 14), // 103.0 lbs
+    reqLossStoneDesc: '7 st 5 lbs lost',
+    reqLossKg: (327 - (16 * 14)) * 0.45359237, // 46.7 kg
+    scaleWeightLbs: 16 * 14, // 224 lbs
+    scaleWeightStoneDesc: '16 st 0 lbs'
+  },
+  {
+    id: 'reach-15-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 15,
+    title: 'Achieving 15 Stone',
+    reqLossLbs: 327 - (15 * 14), // 117.0 lbs
+    reqLossStoneDesc: '8 st 5 lbs lost',
+    reqLossKg: (327 - (15 * 14)) * 0.45359237, // 53.1 kg
+    scaleWeightLbs: 15 * 14, // 210 lbs
+    scaleWeightStoneDesc: '15 st 0 lbs'
+  },
+  {
+    id: 'reach-14-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 14,
+    title: 'Achieving 14 Stone',
+    reqLossLbs: 327 - (14 * 14), // 131.0 lbs
+    reqLossStoneDesc: '9 st 5 lbs lost',
+    reqLossKg: (327 - (14 * 14)) * 0.45359237, // 59.4 kg
+    scaleWeightLbs: 14 * 14, // 196 lbs
+    scaleWeightStoneDesc: '14 st 0 lbs'
+  },
+  {
+    id: 'reach-13-st',
+    category: 'stone-reach',
+    type: 'stone_reach',
+    stoneVal: 13,
+    title: 'Achieving 13 Stone',
+    reqLossLbs: 327 - (13 * 14), // 145.0 lbs
+    reqLossStoneDesc: '10 st 5 lbs lost',
+    reqLossKg: (327 - (13 * 14)) * 0.45359237, // 65.8 kg
+    scaleWeightLbs: 13 * 14, // 182 lbs
+    scaleWeightStoneDesc: '13 st 0 lbs'
+  },
+
+  // 3. Lost 20 KG, 30 kg, 40 kg and 50 kg
+  // Measured on loss from heaviest weight (148.32 kg = 327 lbs)
+  {
+    id: 'lost-20-kg',
+    category: 'kg-lost',
+    type: 'kg_lost',
+    kgVal: 20,
+    title: 'Lost 20 kg',
+    reqLossKg: 20,
+    reqLossLbs: 20 * 2.20462262, // 44.1 lbs
+    reqLossStoneDesc: '3 st 2.1 lbs lost',
+    scaleWeightKg: HEAVIEST_WEIGHT_KG - 20
+  },
+  {
+    id: 'lost-30-kg',
+    category: 'kg-lost',
+    type: 'kg_lost',
+    kgVal: 30,
+    title: 'Lost 30 kg',
+    reqLossKg: 30,
+    reqLossLbs: 30 * 2.20462262, // 66.1 lbs
+    reqLossStoneDesc: '4 st 10.1 lbs lost',
+    scaleWeightKg: HEAVIEST_WEIGHT_KG - 30
+  },
+  {
+    id: 'lost-40-kg',
+    category: 'kg-lost',
+    type: 'kg_lost',
+    kgVal: 40,
+    title: 'Lost 40 kg',
+    reqLossKg: 40,
+    reqLossLbs: 40 * 2.20462262, // 88.2 lbs
+    reqLossStoneDesc: '6 st 4.2 lbs lost',
+    scaleWeightKg: HEAVIEST_WEIGHT_KG - 40
+  },
+  {
+    id: 'lost-50-kg',
+    category: 'kg-lost',
+    type: 'kg_lost',
+    kgVal: 50,
+    title: 'Lost 50 kg',
+    reqLossKg: 50,
+    reqLossLbs: 50 * 2.20462262, // 110.2 lbs
+    reqLossStoneDesc: '7 st 12.2 lbs lost',
+    scaleWeightKg: HEAVIEST_WEIGHT_KG - 50
+  }
+];
+
+let currentMilestoneFilter = 'all';
+
+/**
+ * 1C. Render Accurate Milestones:
+ * Evaluates achievement based strictly on heaviest weight loss (from 23 st 5 lbs / 327 lbs / 148.3 kg)
+ * and measures progress by how much weight the user has lost.
+ * 
+ * @param {number|null} currentKg - Current body weight in kilograms
+ */
+function renderMilestones(currentKg) {
+  const track = document.getElementById('milestones-track');
+  const summaryBadge = document.getElementById('milestones-achieved-badge');
+  if (!track) return;
+
+  // Safely resolve currentKg if not provided
+  if (currentKg === undefined || currentKg === null) {
+    const chrono = getChronologicalRecords();
+    currentKg = chrono.length > 0 ? chrono[chrono.length - 1].weight : null;
+  }
+
+  const currentLbs = (currentKg !== null && !isNaN(currentKg) && currentKg > 0)
+    ? currentKg * 2.20462262
+    : null;
+  const lbsLost = currentLbs !== null ? (HEAVIEST_TOTAL_LBS - currentLbs) : 0;
+  const kgLost = currentKg !== null ? (HEAVIEST_WEIGHT_KG - currentKg) : 0;
+
+  // Format the user's total loss from heaviest weight
+  let stonesLost = Math.floor(Math.abs(lbsLost) / 14);
+  let remLbsLost = Number((Math.abs(lbsLost) % 14).toFixed(1));
+  if (remLbsLost >= 14) {
+    stonesLost += 1;
+    remLbsLost = 0;
+  }
+
+  // Update the top loss banner in the Heaviest Weight tab
+  const bannerLoss = document.getElementById('milestones-banner-loss');
+  const bannerSub = document.getElementById('milestones-banner-sub');
+  if (bannerLoss && bannerSub) {
+    if (currentKg !== null && lbsLost >= 0) {
+      bannerLoss.textContent = `${stonesLost} st ${remLbsLost} lbs lost`;
+      bannerSub.textContent = `${lbsLost.toFixed(1)} lbs • ${kgLost.toFixed(1)} kg total loss`;
+    } else if (currentKg !== null) {
+      bannerLoss.textContent = `+${stonesLost} st ${remLbsLost} lbs`;
+      bannerSub.textContent = `${Math.abs(lbsLost).toFixed(1)} lbs above peak weight`;
+    } else {
+      bannerLoss.textContent = `-- st -- lbs`;
+      bannerSub.textContent = `-- lbs • -- kg total loss`;
+    }
+  }
+
+  // Count total achievements across all 21 milestones based on heaviest weight loss
+  let achievedCount = 0;
+  MILESTONES_CONFIG.forEach(m => {
+    let done = false;
+    if (currentKg !== null) {
+      if (m.type === 'kg_lost') {
+        done = kgLost >= m.reqLossKg;
+      } else {
+        done = lbsLost >= m.reqLossLbs;
+      }
+    }
+    if (done) achievedCount++;
+  });
+
+  if (summaryBadge) {
+    const totalCount = MILESTONES_CONFIG.length;
+    const pct = Math.round((achievedCount / totalCount) * 100);
+    summaryBadge.textContent = `${achievedCount} / ${totalCount} Achieved (${pct}%)`;
+  }
+
+  // Filter list
+  const filtered = MILESTONES_CONFIG.filter(m => {
+    if (currentMilestoneFilter === 'all') return true;
+    return m.category === currentMilestoneFilter;
+  });
+
+  track.innerHTML = '';
+
+  filtered.forEach(m => {
+    let isAchieved = false;
+    let progressPct = 0;
+    let reqLossText = '';
+    let measuredLossText = '';
+    let statusText = '';
+    let badgeClass = '';
+    let badgeText = '';
+    let icon = '🎯';
+
+    if (currentKg === null) {
+      badgeClass = 'badge-pending';
+      badgeText = 'Pending';
+      reqLossText = `Target Loss from 23 st 5 lbs: ${m.reqLossLbs} lbs`;
+      measuredLossText = 'Measured on your heaviest weight loss';
+      statusText = 'Log a weigh-in to measure loss progress';
+      progressPct = 0;
+    } else {
+      if (m.type === 'kg_lost') {
+        isAchieved = kgLost >= m.reqLossKg;
+        progressPct = Math.min(100, Math.max(0, (kgLost / m.reqLossKg) * 100));
+        reqLossText = `Target Loss: ${m.reqLossKg} kg (${m.reqLossLbs.toFixed(1)} lbs • ${m.reqLossStoneDesc}) from 148.3 kg`;
+        measuredLossText = `Your Measured Loss: ${kgLost.toFixed(1)} kg (${lbsLost.toFixed(1)} lbs • ${stonesLost} st ${remLbsLost} lbs)`;
+
+        if (isAchieved) {
+          icon = '🏆';
+          badgeClass = 'badge-done';
+          badgeText = 'Achieved ✓';
+          const extraKg = (kgLost - m.reqLossKg).toFixed(1);
+          statusText = `Target achieved! You have lost ${kgLost.toFixed(1)} kg (exceeds requirement by ${extraKg} kg)`;
+        } else {
+          icon = '⚖️';
+          badgeClass = 'badge-active';
+          badgeText = `${Math.round(progressPct)}%`;
+          const remKg = (m.reqLossKg - kgLost).toFixed(1);
+          const remLbs = ((m.reqLossKg - kgLost) * 2.20462262).toFixed(1);
+          statusText = `${remKg} kg (${remLbs} lbs) remaining to lose from heaviest weight`;
+        }
+      } else if (m.type === 'stone_lost') {
+        isAchieved = lbsLost >= m.reqLossLbs;
+        progressPct = Math.min(100, Math.max(0, (lbsLost / m.reqLossLbs) * 100));
+        reqLossText = `Target Loss: ${m.stoneVal} Stone (${m.reqLossLbs} lbs • ${(m.reqLossKg).toFixed(1)} kg) from 23 st 5 lbs`;
+        measuredLossText = `Your Measured Loss: ${stonesLost} st ${remLbsLost} lbs (${lbsLost.toFixed(1)} lbs • ${kgLost.toFixed(1)} kg)`;
+
+        if (isAchieved) {
+          icon = '🏆';
+          badgeClass = 'badge-done';
+          badgeText = 'Achieved ✓';
+          const extraLbs = (lbsLost - m.reqLossLbs).toFixed(1);
+          const extraSt = Math.floor(extraLbs / 14);
+          const extraRem = (extraLbs % 14).toFixed(1);
+          statusText = `Target achieved! You have lost ${stonesLost} st ${remLbsLost} lbs (exceeds requirement by ${extraSt > 0 ? extraSt + ' st ' : ''}${extraRem} lbs / ${extraLbs} lbs)`;
+        } else {
+          icon = '📉';
+          badgeClass = 'badge-active';
+          badgeText = `${Math.round(progressPct)}%`;
+          const remLbs = (m.reqLossLbs - lbsLost).toFixed(1);
+          const remSt = Math.floor(remLbs / 14);
+          const remPart = (remLbs % 14).toFixed(1);
+          statusText = `${remSt > 0 ? remSt + ' st ' : ''}${remPart} lbs (${(remLbs * 0.45359237).toFixed(1)} kg) remaining to lose from heaviest weight`;
+        }
+      } else if (m.type === 'stone_reach') {
+        isAchieved = lbsLost >= m.reqLossLbs;
+        progressPct = Math.min(100, Math.max(0, (lbsLost / m.reqLossLbs) * 100));
+        reqLossText = `Target Loss: ${m.reqLossStoneDesc} (${m.reqLossLbs} lbs • ${(m.reqLossKg).toFixed(1)} kg) to reach ${m.stoneVal} Stone`;
+        measuredLossText = `Your Measured Loss: ${stonesLost} st ${remLbsLost} lbs (${lbsLost.toFixed(1)} lbs • ${kgLost.toFixed(1)} kg)`;
+
+        if (isAchieved) {
+          icon = '🏆';
+          badgeClass = 'badge-done';
+          badgeText = 'Achieved ✓';
+          const extraLbs = (lbsLost - m.reqLossLbs).toFixed(1);
+          statusText = `Target achieved! Reached ${m.stoneVal} Stone by losing ${stonesLost} st ${remLbsLost} lbs (${lbsLost.toFixed(1)} lbs)`;
+        } else {
+          icon = '🎯';
+          badgeClass = 'badge-active';
+          badgeText = `${Math.round(progressPct)}%`;
+          const remLbs = (m.reqLossLbs - lbsLost).toFixed(1);
+          const remSt = Math.floor(remLbs / 14);
+          const remPart = (remLbs % 14).toFixed(1);
+          statusText = `${remSt > 0 ? remSt + ' st ' : ''}${remPart} lbs (${(remLbs * 0.45359237).toFixed(1)} kg) remaining to lose to reach ${m.stoneVal} Stone`;
+        }
+      }
+    }
+
+    const card = document.createElement('div');
+    card.className = `milestone-step ${isAchieved ? 'step-done' : (progressPct > 0 ? 'step-active' : 'step-pending')}`;
+
+    card.innerHTML = `
+      <div class="milestone-step-top">
+        <div class="milestone-step-title-wrap">
+          <span class="step-badge" aria-hidden="true">${icon}</span>
+          <div>
+            <div class="step-name">${m.title}</div>
+            <div class="step-target-loss">${reqLossText}</div>
+          </div>
+        </div>
+        <span class="badge-status ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="milestone-step-details">
+        <div class="step-val text-green">${measuredLossText}</div>
+        <div class="step-sub">${statusText}</div>
+      </div>
+      <div class="milestone-bar-container" title="${Math.round(progressPct)}% loss requirement completed">
+        <div class="milestone-bar-fill" style="width: ${progressPct}%;"></div>
+      </div>
+      <div class="milestone-loss-meta-row">
+        <span>Target Loss: ${m.type === 'kg_lost' ? m.reqLossKg + ' kg' : m.reqLossLbs + ' lbs'}</span>
+        <span>${Math.round(progressPct)}% of loss target achieved</span>
+      </div>
+    `;
+
+    track.appendChild(card);
+  });
+}
+
+/**
+ * Initializes the milestone category filter buttons.
+ */
+function initMilestoneFilters() {
+  const filterBtns = document.querySelectorAll('.btn-milestone-filter');
+  if (!filterBtns || filterBtns.length === 0) return;
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-milestone-filter');
+      if (!filter || filter === currentMilestoneFilter) return;
+
+      currentMilestoneFilter = filter;
+      filterBtns.forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-milestone-filter') === filter);
+      });
+      renderMilestones();
+    });
+  });
 }
 
 /**
@@ -1656,6 +2144,10 @@ function switchTab(tabName) {
       renderProgressChart();
       renderGoalGaugeChart();
     });
+  } else if (tabName === 'heaviest') {
+    requestAnimationFrame(() => {
+      renderMilestones();
+    });
   }
 }
 
@@ -1725,6 +2217,9 @@ function initTabs() {
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Tab Navigation
   initTabs();
+
+  // 1B. Initialize Milestones Category Filters
+  initMilestoneFilters();
 
   // 2. Automatically set the date field to today's date when page loads
   dateInput.value = getTodayDateString();
