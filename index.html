@@ -350,51 +350,44 @@
         </div>
       </section>
 
-      <!-- Transformation Milestones Track Card -->
-      <div class="card transformation-info-card">
-        <h3 class="info-card-title">✨ Lifetime Transformation Milestones</h3>
-        <p class="info-card-intro">Tracking your monumental body recomposition and weight reduction from 327 lbs (23 st 5 lbs):</p>
-        
-        <div class="milestones-track">
-          <div class="milestone-step step-done">
-            <div class="step-badge">🏁</div>
-            <div class="step-info">
-              <div class="step-name">Peak Benchmark Origin</div>
-              <div class="step-val">23 st 5 lbs (148.3 kg • 327.0 lbs)</div>
-              <div class="step-sub">Starting all-time heaviest point</div>
+      <!-- Accurate Lifetime Transformation Milestones Card -->
+      <div class="card transformation-info-card" id="milestones-card">
+        <div class="milestones-card-header">
+          <div>
+            <div class="milestones-title-row">
+              <h3 class="info-card-title">✨ Heaviest Weight Loss Milestones</h3>
+              <span id="milestones-achieved-badge" class="badge-milestones-summary">0 / 21 Achieved</span>
             </div>
-            <span class="badge-status badge-done">Origin</span>
+            <p class="info-card-intro">Achievements are measured strictly on <strong>how much weight you have lost from your heaviest weight</strong> of 23 stone 5 lbs (327.0 lbs &bull; 148.3 kg)</p>
           </div>
 
-          <div class="milestone-step step-done">
-            <div class="step-badge">🔥</div>
-            <div class="step-info">
-              <div class="step-name">20 Stone Club</div>
-              <div class="step-val">20 st 0 lbs (127.0 kg • 280.0 lbs)</div>
-              <div class="step-sub">Lost 3 st 5 lbs (47.0 lbs / 21.3 kg)</div>
-            </div>
-            <span class="badge-status badge-done">Achieved ✓</span>
+          <!-- Category Filter Buttons -->
+          <div class="milestones-filter-bar" role="group" aria-label="Filter Milestones">
+            <button type="button" class="btn-milestone-filter active" data-milestone-filter="all">All (21)</button>
+            <button type="button" class="btn-milestone-filter" data-milestone-filter="stone-lost">Lost Stone 1–10 (10)</button>
+            <button type="button" class="btn-milestone-filter" data-milestone-filter="stone-reach">Achieving Stone (7)</button>
+            <button type="button" class="btn-milestone-filter" data-milestone-filter="kg-lost">Lost KG (4)</button>
           </div>
+        </div>
 
-          <div class="milestone-step step-done">
-            <div class="step-badge">⚡</div>
-            <div class="step-info">
-              <div class="step-name">16 Stone Threshold</div>
-              <div class="step-val">16 st 0 lbs (101.6 kg • 224.0 lbs)</div>
-              <div class="step-sub">Lost 7 st 5 lbs (103.0 lbs / 46.7 kg)</div>
-            </div>
-            <span class="badge-status badge-done">Achieved ✓</span>
+        <!-- Prominent Heaviest Loss Meter Banner -->
+        <div class="milestones-loss-banner" id="milestones-loss-banner">
+          <div class="loss-banner-col">
+            <span class="loss-banner-label">Heaviest Starting Peak</span>
+            <span class="loss-banner-val">23 st 5 lbs</span>
+            <span class="loss-banner-sub">327.0 lbs • 148.3 kg</span>
           </div>
+          <div class="loss-banner-divider" aria-hidden="true">➔</div>
+          <div class="loss-banner-col highlight-green">
+            <span class="loss-banner-label">How Much You Have Lost</span>
+            <span class="loss-banner-val text-green" id="milestones-banner-loss">-- st -- lbs</span>
+            <span class="loss-banner-sub text-green" id="milestones-banner-sub">-- lbs • -- kg total loss</span>
+          </div>
+        </div>
 
-          <div class="milestone-step step-active">
-            <div class="step-badge">🎯</div>
-            <div class="step-info">
-              <div class="step-name">Current Weight Range</div>
-              <div class="step-val">Sub-13 Stone Fitness Zone</div>
-              <div class="step-sub">Over 10+ Stone total lifetime fat loss accomplished!</div>
-            </div>
-            <span class="badge-status badge-active">Active</span>
-          </div>
+        <!-- Dynamic Milestones Track (Populated by script.js) -->
+        <div class="milestones-track" id="milestones-track">
+          <!-- Dynamically populated and updated by script.js -->
         </div>
       </div>
 
