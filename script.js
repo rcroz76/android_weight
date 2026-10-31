@@ -46,6 +46,7 @@ let currentChartTimeframe = 'all'; // 'all', '3m', '1m'
 const weightForm = document.getElementById('weight-form');
 const dateInput = document.getElementById('weight-date');
 const weightInput = document.getElementById('weight-input');
+const weightImperialHint = document.getElementById('weight-imperial-hint');
 const formFeedback = document.getElementById('form-feedback');
 const clearBtn = document.getElementById('clear-btn');
 
@@ -77,6 +78,7 @@ const btnEditHeight = document.getElementById('btn-edit-height');
 // Goal Weight Elements
 const statGoalWeight = document.getElementById('stat-goal-weight');
 const statGoalUnit = document.getElementById('stat-goal-unit');
+const statGoalImperial = document.getElementById('stat-goal-imperial');
 const statGoalSubtext = document.getElementById('stat-goal-subtext');
 const goalProgressBar = document.getElementById('goal-progress-bar');
 const goalProgressBarContainer = document.getElementById('goal-progress-bar-container');
@@ -288,6 +290,44 @@ function calculateWeeksElapsed(startDateStr, latestDateStr) {
 function kgToPounds(kg) {
   if (!kg || isNaN(kg) || kg <= 0) return 0;
   return kg * 2.20462262185;
+}
+
+/**
+ * Formats a weight in kilograms to both Stone & Pounds and Total Pounds.
+ * Example: 82.4 kg -> "12 st 13.7 lbs • 181.7 lbs"
+ * 
+ * @param {number} kg - Weight in kilograms
+ * @returns {string} - Formatted string (e.g. "12 st 13.7 lbs • 181.7 lbs")
+ */
+function formatWeightImperial(kg) {
+  if (kg === null || kg === undefined || isNaN(kg) || kg <= 0) {
+    return '-- st -- lbs • -- lbs';
+  }
+  const stLbs = kgToStoneAndPounds(kg);
+  const lbs = kgToPounds(kg).toFixed(1);
+  return `${stLbs} • ${lbs} lbs`;
+}
+
+/**
+ * Formats a weight difference in kilograms to signed Stone & Pounds and Total Pounds.
+ * Example: -0.4 kg -> "-0 st 0.9 lbs • -0.9 lbs"
+ * Example: +1.2 kg -> "+0 st 2.6 lbs • +2.6 lbs"
+ * Example: 0.0 kg -> "0 st 0.0 lbs • 0.0 lbs"
+ * 
+ * @param {number} diffKg - Weight difference in kg
+ * @returns {string} - Signed stone and pounds and total pounds difference
+ */
+function kgDiffToImperialWithLbs(diffKg) {
+  if (diffKg === null || diffKg === undefined || isNaN(diffKg)) {
+    return '—';
+  }
+  if (diffKg === 0) {
+    return '0 st 0.0 lbs • 0.0 lbs';
+  }
+  const stLbs = kgDiffToStoneAndPounds(diffKg);
+  const sign = diffKg < 0 ? '-' : '+';
+  const totalLbs = (Math.abs(diffKg) * 2.20462262185).toFixed(1);
+  return `${stLbs} • ${sign}${totalLbs} lbs`;
 }
 
 /**
@@ -515,14 +555,14 @@ function renderDashboardSummary() {
 
   if (totalCount === 0) {
     heroCurrentWeight.textContent = '--';
-    heroImperialText.textContent = '-- st -- lbs';
+    heroImperialText.textContent = '-- st -- lbs • -- lbs';
     heroDateBadge.textContent = 'No weigh-ins yet';
     statStartWeight.textContent = '--';
-    statStartImperial.textContent = '-- st -- lbs';
+    statStartImperial.textContent = '-- st -- lbs • -- lbs';
     statStartWeeks.textContent = '-- weeks gone by';
     statStartDate.textContent = 'First weigh-in';
     statTotalChange.textContent = '--';
-    statTotalChangeImperial.textContent = '-- st -- lbs';
+    statTotalChangeImperial.textContent = '-- st -- lbs • -- lbs';
     statProgressSubtext.textContent = 'Overall progress';
     statProgressIcon.textContent = '⚖️';
 
@@ -533,7 +573,8 @@ function renderDashboardSummary() {
     targetProteinSubtext.textContent = 'Current lbs × 0.7g – 1g';
     statBmi.textContent = '--';
     bmiBadge.classList.add('hidden');
-    statGoalSubtext.textContent = goalWeightKg ? `Goal: ${goalWeightKg} kg` : 'No goal set';
+    if (statGoalImperial) statGoalImperial.textContent = goalWeightKg ? formatWeightImperial(goalWeightKg) : '-- st -- lbs • -- lbs';
+    statGoalSubtext.textContent = goalWeightKg ? `Goal: ${goalWeightKg} kg (${formatWeightImperial(goalWeightKg)})` : 'No goal set';
     goalProgressBar.style.width = '0%';
     renderHeaviestWeightSection(null);
     return;
@@ -547,39 +588,42 @@ function renderDashboardSummary() {
   const currentKg = latestRecord.weight;
   const startKg = firstRecord.weight;
 
-  // 1. Current Weight (displayed in KG and Stone & Pounds)
+  // 1. Current Weight (displayed in KG, Stone & Pounds, and Total Pounds)
   heroCurrentWeight.textContent = currentKg.toFixed(1);
-  heroImperialText.textContent = kgToStoneAndPounds(currentKg);
+  heroImperialText.textContent = formatWeightImperial(currentKg);
   heroDateBadge.textContent = `Latest: ${formatDisplayDate(latestRecord.date)}`;
 
-  // 2. Starting Weight (displayed in KG, Stone & Pounds, and Weeks Gone By)
+  // 2. Starting Weight (displayed in KG, Stone & Pounds, Total Pounds, and Weeks Gone By)
   statStartWeight.textContent = startKg.toFixed(1);
-  statStartImperial.textContent = kgToStoneAndPounds(startKg);
+  statStartImperial.textContent = formatWeightImperial(startKg);
   statStartWeeks.textContent = calculateWeeksElapsed(firstRecord.date, latestRecord.date);
   statStartDate.textContent = `Started: ${formatDisplayDate(firstRecord.date)}`;
 
-  // 3. Total Progress (Current - Start in KG and Stone & Pounds)
+  // 3. Total Progress (Current - Start in KG, Stone & Pounds, and Total Pounds)
   if (totalCount === 1) {
     statTotalChange.textContent = '0.0';
-    statTotalChangeImperial.textContent = '0 st 0.0 lbs';
+    statTotalChangeImperial.textContent = '0 st 0.0 lbs • 0.0 lbs';
     statProgressSubtext.textContent = 'Baseline weigh-in recorded';
     statProgressIcon.textContent = '🎯';
     statTotalChangeContainer.classList.add('change-neutral');
   } else {
     const totalDiff = Number((currentKg - startKg).toFixed(1));
-    const imperialDiff = kgDiffToStoneAndPounds(totalDiff);
+    const imperialDiff = kgDiffToImperialWithLbs(totalDiff);
     statTotalChangeImperial.textContent = imperialDiff;
     
+    const diffLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(startKg)).toFixed(1);
+    const diffStLbs = kgToStoneAndPounds(Math.abs(totalDiff));
+
     if (totalDiff < 0) {
       // Weight Lost (Negative difference)
       statTotalChange.textContent = totalDiff.toFixed(1);
-      statProgressSubtext.textContent = `${Math.abs(totalDiff).toFixed(1)} kg (${Math.abs(kgToPounds(currentKg) - kgToPounds(startKg)).toFixed(1)} lbs) lost since start`;
+      statProgressSubtext.textContent = `${Math.abs(totalDiff).toFixed(1)} kg (${diffStLbs} • ${diffLbs} lbs) lost since start`;
       statProgressIcon.textContent = '📉';
       statTotalChangeContainer.classList.add('change-loss');
     } else if (totalDiff > 0) {
       // Weight Gained (Positive difference)
       statTotalChange.textContent = `+${totalDiff.toFixed(1)}`;
-      statProgressSubtext.textContent = `${totalDiff.toFixed(1)} kg (${(kgToPounds(currentKg) - kgToPounds(startKg)).toFixed(1)} lbs) gained since start`;
+      statProgressSubtext.textContent = `${totalDiff.toFixed(1)} kg (${diffStLbs} • ${diffLbs} lbs) gained since start`;
       statProgressIcon.textContent = '📈';
       statTotalChangeContainer.classList.add('change-gain');
     } else {
@@ -620,14 +664,17 @@ function renderDashboardSummary() {
   if (goalWeightKg !== null) {
     statGoalWeight.textContent = goalWeightKg.toFixed(1);
     statGoalUnit.textContent = 'kg';
+    if (statGoalImperial) statGoalImperial.textContent = formatWeightImperial(goalWeightKg);
     const goalDiff = Number((currentKg - goalWeightKg).toFixed(1));
+    const goalDiffLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(goalWeightKg)).toFixed(1);
+    const goalDiffStLbs = kgToStoneAndPounds(Math.abs(goalDiff));
 
     if (goalDiff > 0) {
-      statGoalSubtext.textContent = `${goalDiff.toFixed(1)} kg to lose to goal (${kgToStoneAndPounds(goalWeightKg)})`;
+      statGoalSubtext.textContent = `${goalDiff.toFixed(1)} kg (${goalDiffStLbs} • ${goalDiffLbs} lbs) to lose to goal`;
     } else if (goalDiff < 0) {
-      statGoalSubtext.textContent = `${Math.abs(goalDiff).toFixed(1)} kg to gain to goal (${kgToStoneAndPounds(goalWeightKg)})`;
+      statGoalSubtext.textContent = `${Math.abs(goalDiff).toFixed(1)} kg (${goalDiffStLbs} • ${goalDiffLbs} lbs) to gain to goal`;
     } else {
-      statGoalSubtext.textContent = `Goal reached! 🏆 (${kgToStoneAndPounds(goalWeightKg)})`;
+      statGoalSubtext.textContent = `Goal reached! 🏆 (${formatWeightImperial(goalWeightKg)})`;
     }
 
     // Progress Bar calculation towards goal
@@ -646,6 +693,7 @@ function renderDashboardSummary() {
     }
   } else {
     statGoalWeight.textContent = '--';
+    if (statGoalImperial) statGoalImperial.textContent = '-- st -- lbs • -- lbs';
     statGoalSubtext.textContent = 'No goal set — click to set';
     goalProgressBar.style.width = '0%';
   }
@@ -674,7 +722,7 @@ function renderHeaviestWeightSection(currentKg) {
     heaviestLostKg.textContent = '--';
     heaviestLostPercent.textContent = '--% of peak weight lost';
     heaviestCurrentKg.textContent = '--';
-    heaviestCurrentImperial.textContent = '-- st -- lbs';
+    heaviestCurrentImperial.textContent = '-- st -- lbs • -- lbs';
     if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = '0%';
     if (heaviestProgressText) heaviestProgressText.textContent = '0% lost';
     return;
@@ -683,7 +731,7 @@ function renderHeaviestWeightSection(currentKg) {
   // Current weight imperial representation
   const currentLbs = kgToPounds(currentKg);
   heaviestCurrentKg.textContent = currentKg.toFixed(1);
-  heaviestCurrentImperial.textContent = kgToStoneAndPounds(currentKg);
+  heaviestCurrentImperial.textContent = formatWeightImperial(currentKg);
 
   // Weight lost calculation from heaviest weight (23 stone 5 lbs = 327 lbs, ~148.32 kg)
   const lbsLost = HEAVIEST_TOTAL_LBS - currentLbs;
@@ -706,7 +754,7 @@ function renderHeaviestWeightSection(currentKg) {
     const percentLost = Math.min(100, Math.max(0, (lbsLost / HEAVIEST_TOTAL_LBS) * 100));
     heaviestLostPercent.textContent = `${percentLost.toFixed(1)}% of peak weight lost`;
     if (heaviestProgressBarFill) heaviestProgressBarFill.style.width = `${percentLost.toFixed(1)}%`;
-    if (heaviestProgressText) heaviestProgressText.textContent = `${percentLost.toFixed(1)}% lost (${stonesLost} st ${remLbsLost} lbs)`;
+    if (heaviestProgressText) heaviestProgressText.textContent = `${percentLost.toFixed(1)}% lost (${stonesLost} st ${remLbsLost} lbs • ${lbsLost.toFixed(1)} lbs)`;
   } else {
     // Edge case: current weight is above peak
     const overKg = Math.abs(kgLost).toFixed(1);
@@ -749,7 +797,7 @@ function renderHistoryTable() {
     const tdDate = document.createElement('td');
     tdDate.textContent = formatDisplayDate(entry.date);
 
-    // Weight Cell (e.g. 82.5 kg with stone & pounds)
+    // Weight Cell (e.g. 82.5 kg with stone & pounds and pounds)
     const tdWeight = document.createElement('td');
     tdWeight.className = 'weight-cell';
     
@@ -758,12 +806,12 @@ function renderHistoryTable() {
     
     const imperialSpan = document.createElement('span');
     imperialSpan.className = 'table-sub-imperial';
-    imperialSpan.textContent = kgToStoneAndPounds(entry.weight);
+    imperialSpan.textContent = formatWeightImperial(entry.weight);
     
     tdWeight.appendChild(kgDiv);
     tdWeight.appendChild(imperialSpan);
 
-    // Change Cell (displays change from last input in KG and Stone & Pounds)
+    // Change Cell (displays change from last input in KG, Stone & Pounds, and Pounds)
     const tdChange = document.createElement('td');
 
     if (entry.change === null) {
@@ -793,10 +841,10 @@ function renderHistoryTable() {
         badge.textContent = `0.0 kg`;
       }
 
-      // Stone & pounds change from last input
+      // Stone & pounds and total pounds change from last input
       const imperialChangeSpan = document.createElement('span');
       imperialChangeSpan.className = 'table-sub-imperial';
-      imperialChangeSpan.textContent = kgDiffToStoneAndPounds(entry.change);
+      imperialChangeSpan.textContent = kgDiffToImperialWithLbs(entry.change);
 
       diffContainer.appendChild(badge);
       diffContainer.appendChild(imperialChangeSpan);
@@ -992,7 +1040,10 @@ function renderProgressChart() {
     ctx.textBaseline = 'bottom';
     ctx.font = 'bold 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = '#f59e0b';
-    ctx.fillText(`Target Goal: ${goalWeightKg.toFixed(1)} kg`, width - padding.right, goalY - 4);
+    const goalImperialStr = width > 460 
+      ? `Target: ${goalWeightKg.toFixed(1)} kg (${kgToStoneAndPounds(goalWeightKg)} • ${kgToPounds(goalWeightKg).toFixed(1)} lbs)`
+      : `Target: ${goalWeightKg.toFixed(1)} kg (${kgToStoneAndPounds(goalWeightKg)})`;
+    ctx.fillText(goalImperialStr, width - padding.right, goalY - 4);
     ctx.restore();
   }
 
@@ -1090,11 +1141,11 @@ function renderGoalGaugeChart() {
       gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
     }
     if (gaugeStartWeight) gaugeStartWeight.textContent = '-- kg';
-    if (gaugeStartSub) gaugeStartSub.textContent = '-- st -- lbs';
+    if (gaugeStartSub) gaugeStartSub.textContent = '-- st -- lbs • -- lbs';
     if (gaugeCurrentWeight) gaugeCurrentWeight.textContent = '-- kg';
-    if (gaugeCurrentSub) gaugeCurrentSub.textContent = '-- st -- lbs';
+    if (gaugeCurrentSub) gaugeCurrentSub.textContent = '-- st -- lbs • -- lbs';
     if (gaugeGoalWeight) gaugeGoalWeight.textContent = '-- kg';
-    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs';
+    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs • -- lbs';
     if (gaugeDetailMsg) gaugeDetailMsg.textContent = 'Log your weigh-ins to track progress against your goal weight.';
     return;
   }
@@ -1105,9 +1156,9 @@ function renderGoalGaugeChart() {
   const currentKg = latestRecord.weight;
 
   if (gaugeStartWeight) gaugeStartWeight.textContent = `${startKg.toFixed(1)} kg`;
-  if (gaugeStartSub) gaugeStartSub.textContent = kgToStoneAndPounds(startKg);
+  if (gaugeStartSub) gaugeStartSub.textContent = formatWeightImperial(startKg);
   if (gaugeCurrentWeight) gaugeCurrentWeight.textContent = `${currentKg.toFixed(1)} kg`;
-  if (gaugeCurrentSub) gaugeCurrentSub.textContent = kgToStoneAndPounds(currentKg);
+  if (gaugeCurrentSub) gaugeCurrentSub.textContent = formatWeightImperial(currentKg);
 
   if (goalWeightKg === null) {
     gaugeFillArc.style.strokeDashoffset = GAUGE_CIRCUMFERENCE.toString();
@@ -1118,14 +1169,14 @@ function renderGoalGaugeChart() {
       gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
     }
     if (gaugeGoalWeight) gaugeGoalWeight.textContent = '-- kg';
-    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs';
+    if (gaugeGoalSub) gaugeGoalSub.textContent = '-- st -- lbs • -- lbs';
     if (gaugeDetailMsg) gaugeDetailMsg.textContent = 'No goal weight set. Click "Reset Goal" above to configure your target.';
     return;
   }
 
   const goalKg = goalWeightKg;
   if (gaugeGoalWeight) gaugeGoalWeight.textContent = `${goalKg.toFixed(1)} kg`;
-  if (gaugeGoalSub) gaugeGoalSub.textContent = kgToStoneAndPounds(goalKg);
+  if (gaugeGoalSub) gaugeGoalSub.textContent = formatWeightImperial(goalKg);
 
   const targetDelta = Math.abs(startKg - goalKg);
   const isLossGoal = startKg >= goalKg;
@@ -1141,8 +1192,10 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-success';
       }
       const totalLost = (startKg - currentKg).toFixed(1);
+      const totalLostLbs = Math.abs(kgToPounds(startKg) - kgToPounds(currentKg)).toFixed(1);
+      const totalLostSt = kgToStoneAndPounds(Math.abs(startKg - currentKg));
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `Goal reached! You have lost ${totalLost} kg (${kgToStoneAndPounds(startKg - currentKg)}) since starting.`;
+        gaugeDetailMsg.textContent = `Goal reached! You have lost ${totalLost} kg (${totalLostSt} • ${totalLostLbs} lbs) since starting.`;
       }
     } else if (currentKg >= startKg) {
       percentAchieved = 0;
@@ -1153,14 +1206,20 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
       }
       const toGoal = (currentKg - goalKg).toFixed(1);
+      const toGoalLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(goalKg)).toFixed(1);
+      const toGoalSt = kgToStoneAndPounds(Math.abs(currentKg - goalKg));
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `${toGoal} kg (${kgToStoneAndPounds(currentKg - goalKg)}) remaining to reach your ${goalKg} kg target.`;
+        gaugeDetailMsg.textContent = `${toGoal} kg (${toGoalSt} • ${toGoalLbs} lbs) remaining to reach your ${goalKg} kg target.`;
       }
     } else {
       const lost = startKg - currentKg;
       percentAchieved = targetDelta > 0 ? Math.round((lost / targetDelta) * 100) : 100;
       percentAchieved = Math.max(0, Math.min(100, percentAchieved));
       const remainingKg = (currentKg - goalKg).toFixed(1);
+      const lostLbs = Math.abs(kgToPounds(startKg) - kgToPounds(currentKg)).toFixed(1);
+      const lostSt = kgToStoneAndPounds(Math.abs(startKg - currentKg));
+      const remLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(goalKg)).toFixed(1);
+      const remSt = kgToStoneAndPounds(Math.abs(currentKg - goalKg));
 
       gaugePercentDisplay.textContent = `${percentAchieved}%`;
       if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
@@ -1169,7 +1228,7 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-active';
       }
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `${lost.toFixed(1)} kg lost so far \u2022 ${remainingKg} kg (${kgToStoneAndPounds(currentKg - goalKg)}) remaining to goal`;
+        gaugeDetailMsg.textContent = `${lost.toFixed(1)} kg (${lostSt} • ${lostLbs} lbs) lost so far \u2022 ${remainingKg} kg (${remSt} • ${remLbs} lbs) remaining to goal`;
       }
     }
   } else {
@@ -1183,8 +1242,10 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-success';
       }
       const totalGained = (currentKg - startKg).toFixed(1);
+      const totalGainedLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(startKg)).toFixed(1);
+      const totalGainedSt = kgToStoneAndPounds(Math.abs(currentKg - startKg));
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `Goal reached! You have gained ${totalGained} kg (${kgToStoneAndPounds(currentKg - startKg)}) since starting.`;
+        gaugeDetailMsg.textContent = `Goal reached! You have gained ${totalGained} kg (${totalGainedSt} • ${totalGainedLbs} lbs) since starting.`;
       }
     } else if (currentKg <= startKg) {
       percentAchieved = 0;
@@ -1195,14 +1256,20 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-neutral';
       }
       const toGoal = (goalKg - currentKg).toFixed(1);
+      const toGoalGainLbs = Math.abs(kgToPounds(goalKg) - kgToPounds(currentKg)).toFixed(1);
+      const toGoalGainSt = kgToStoneAndPounds(Math.abs(goalKg - currentKg));
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `${toGoal} kg (${kgToStoneAndPounds(goalKg - currentKg)}) remaining to reach your ${goalKg} kg target.`;
+        gaugeDetailMsg.textContent = `${toGoal} kg (${toGoalGainSt} • ${toGoalGainLbs} lbs) remaining to reach your ${goalKg} kg target.`;
       }
     } else {
       const gained = currentKg - startKg;
       percentAchieved = targetDelta > 0 ? Math.round((gained / targetDelta) * 100) : 100;
       percentAchieved = Math.max(0, Math.min(100, percentAchieved));
       const remainingKg = (goalKg - currentKg).toFixed(1);
+      const gainedLbs = Math.abs(kgToPounds(currentKg) - kgToPounds(startKg)).toFixed(1);
+      const gainedSt = kgToStoneAndPounds(Math.abs(currentKg - startKg));
+      const remGainLbs = Math.abs(kgToPounds(goalKg) - kgToPounds(currentKg)).toFixed(1);
+      const remGainSt = kgToStoneAndPounds(Math.abs(goalKg - currentKg));
 
       gaugePercentDisplay.textContent = `${percentAchieved}%`;
       if (gaugeSubtitleDisplay) gaugeSubtitleDisplay.textContent = 'to goal';
@@ -1211,7 +1278,7 @@ function renderGoalGaugeChart() {
         gaugeBadgeStatus.className = 'badge-gauge badge-active';
       }
       if (gaugeDetailMsg) {
-        gaugeDetailMsg.textContent = `${gained.toFixed(1)} kg gained so far \u2022 ${remainingKg} kg (${kgToStoneAndPounds(goalKg - currentKg)}) remaining to goal`;
+        gaugeDetailMsg.textContent = `${gained.toFixed(1)} kg (${gainedSt} • ${gainedLbs} lbs) gained so far \u2022 ${remainingKg} kg (${remGainSt} • ${remGainLbs} lbs) remaining to goal`;
       }
     }
   }
@@ -1292,6 +1359,7 @@ function handleSaveWeight(event) {
 
   // 7. Clear the weight input for the next entry while retaining today's date
   weightInput.value = '';
+  updateWeightInputHint();
   weightInput.focus();
 }
 
@@ -1323,8 +1391,22 @@ function handleDeleteRecord(date, weight) {
 function handleClearForm() {
   dateInput.value = getTodayDateString();
   weightInput.value = '';
+  updateWeightInputHint();
   hideFeedback();
   weightInput.focus();
+}
+
+/**
+ * Updates the helper hint under weight input to show stone & pounds and total pounds live.
+ */
+function updateWeightInputHint() {
+  if (!weightImperialHint) return;
+  const val = parseFloat(weightInput.value);
+  if (!isNaN(val) && val > 0) {
+    weightImperialHint.textContent = `${val.toFixed(1)} kg = ${formatWeightImperial(val)}`;
+  } else {
+    weightImperialHint.textContent = 'Accepts decimal numbers (e.g. 82.5 kg)';
+  }
 }
 
 /**
@@ -1372,7 +1454,7 @@ function handleOpenGoalModal() {
 function updateGoalHint() {
   const val = parseFloat(goalWeightInput.value);
   if (!isNaN(val) && val > 0) {
-    goalImperialHint.textContent = `Equivalent to: ${kgToStoneAndPounds(val)}`;
+    goalImperialHint.textContent = `Equivalent to: ${formatWeightImperial(val)}`;
   } else {
     goalImperialHint.textContent = 'Accepts decimals (e.g. 78.5 kg)';
   }
@@ -1402,7 +1484,7 @@ function handleSaveGoal() {
   localStorage.setItem(GOAL_STORAGE_KEY, goalWeightKg.toString());
   handleCloseGoalModal();
   updateUI();
-  showFeedback(`Goal weight updated to ${goalWeightKg} kg (${kgToStoneAndPounds(goalWeightKg)})!`, 'success');
+  showFeedback(`Goal weight updated to ${goalWeightKg} kg (${formatWeightImperial(goalWeightKg)})!`, 'success');
 }
 
 /**
@@ -1464,6 +1546,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Attach Form Event Listeners
   weightForm.addEventListener('submit', handleSaveWeight);
   clearBtn.addEventListener('click', handleClearForm);
+  if (weightInput) weightInput.addEventListener('input', updateWeightInputHint);
 
   // 3. Goal Weight & Reset Goal Event Listeners
   btnResetGoal.addEventListener('click', handleOpenGoalModal);
