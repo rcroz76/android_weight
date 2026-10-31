@@ -58,10 +58,10 @@
           <span id="hero-current-weight" class="hero-number">--</span>
           <span class="unit">kg</span>
         </div>
-        <!-- Imperial Unit Display: Stone & Pounds -->
+        <!-- Imperial Unit Display: Stone & Pounds and Total Pounds -->
         <div class="hero-imperial-badge" id="hero-imperial-badge">
           <span class="imperial-icon" aria-hidden="true">⚡</span>
-          <span id="hero-imperial-text">-- st -- lbs</span>
+          <span id="hero-imperial-text">-- st -- lbs • -- lbs</span>
         </div>
         <div id="hero-date-badge" class="stat-subtext">Latest weigh-in</div>
       </div>
@@ -75,7 +75,7 @@
             <span id="stat-start-weight">--</span>
             <span class="unit-sm">kg</span>
           </div>
-          <div id="stat-start-imperial" class="imperial-subtext">-- st -- lbs</div>
+          <div id="stat-start-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
           <div id="stat-start-weeks" class="weeks-subtext">-- weeks gone by</div>
           <div id="stat-start-date" class="stat-subtext">First weigh-in</div>
         </div>
@@ -90,7 +90,7 @@
             <span id="stat-total-change">--</span>
             <span class="unit-sm">kg</span>
           </div>
-          <div id="stat-total-change-imperial" class="imperial-subtext">-- st -- lbs</div>
+          <div id="stat-total-change-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
           <div id="stat-progress-subtext" class="stat-subtext">Overall progress</div>
         </div>
       </div>
@@ -161,7 +161,7 @@
               <span id="heaviest-current-kg">--</span>
               <span class="unit-text">kg</span>
             </div>
-            <div class="heaviest-subvalue" id="heaviest-current-imperial">-- st -- lbs</div>
+            <div class="heaviest-subvalue" id="heaviest-current-imperial">-- st -- lbs • -- lbs</div>
           </div>
           <div class="heaviest-progress-container">
             <div class="heaviest-progress-bar-bg">
@@ -235,6 +235,7 @@
             <span id="stat-goal-weight">--</span>
             <span class="unit-sm" id="stat-goal-unit">kg</span>
           </div>
+          <div id="stat-goal-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
           <div class="stat-subtext" id="stat-goal-subtext">No goal set</div>
           <div class="goal-progress-bar-container" id="goal-progress-bar-container">
             <div class="goal-progress-bar" id="goal-progress-bar" style="width: 0%;"></div>
@@ -282,19 +283,19 @@
           <div class="gauge-meta-col start-col">
             <span class="meta-label">🏁 Start</span>
             <span id="gauge-start-weight" class="meta-val">-- kg</span>
-            <span id="gauge-start-sub" class="meta-sub">-- st -- lbs</span>
+            <span id="gauge-start-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
           </div>
 
           <div class="gauge-meta-col current-col">
             <span class="meta-label">⚡ Current</span>
             <span id="gauge-current-weight" class="meta-val">-- kg</span>
-            <span id="gauge-current-sub" class="meta-sub">-- st -- lbs</span>
+            <span id="gauge-current-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
           </div>
 
           <div class="gauge-meta-col goal-col">
             <span class="meta-label">🎯 Target</span>
             <span id="gauge-goal-weight" class="meta-val">-- kg</span>
-            <span id="gauge-goal-sub" class="meta-sub">-- st -- lbs</span>
+            <span id="gauge-goal-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
           </div>
         </div>
 
@@ -345,7 +346,7 @@
               >
               <span class="unit-badge">kg</span>
             </div>
-            <small class="helper-text">Accepts decimal numbers (e.g. 82.5)</small>
+            <small class="helper-text" id="weight-imperial-hint">Accepts decimal numbers (e.g. 82.5 kg)</small>
           </div>
 
           <!-- User Feedback Message Area for alerts / validation -->
@@ -371,7 +372,7 @@
             <h2 id="chart-heading" class="section-title">
               <span class="title-bullet"></span> Progress Graph
             </h2>
-            <p class="section-desc">Weight (kg) over time</p>
+            <p class="section-desc">Weight over time (kg &bull; stone &bull; lbs)</p>
           </div>
           <div class="chart-controls">
             <!-- Timeframe Filter Buttons (All, 3 Months, 1 Month) -->
