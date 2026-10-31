@@ -49,270 +49,490 @@
       </button>
     </header>
 
-    <!-- 1. DASHBOARD SUMMARY SECTION (Displayed at the top of the page) -->
-    <section class="summary-section" aria-label="Weight Summary Overview">
-      <!-- Prominent Featured Card: Current Weight -->
-      <div class="summary-card hero-card">
-        <div class="card-label">Current Weight</div>
-        <div class="hero-weight-display">
-          <span id="hero-current-weight" class="hero-number">--</span>
-          <span class="unit">kg</span>
-        </div>
-        <!-- Imperial Unit Display: Stone & Pounds and Total Pounds -->
-        <div class="hero-imperial-badge" id="hero-imperial-badge">
-          <span class="imperial-icon" aria-hidden="true">⚡</span>
-          <span id="hero-imperial-text">-- st -- lbs • -- lbs</span>
-        </div>
-        <div id="hero-date-badge" class="stat-subtext">Latest weigh-in</div>
-      </div>
+    <!-- Tab Navigation Bar -->
+    <nav class="app-tabs-nav" role="tablist" aria-label="Dashboard Sections">
+      <button type="button" class="tab-btn active" role="tab" id="tab-btn-current" aria-selected="true" aria-controls="tab-panel-current" data-tab="current">
+        <span class="tab-icon" aria-hidden="true">⚡</span>
+        <span class="tab-text">Current Weight</span>
+      </button>
+      <button type="button" class="tab-btn" role="tab" id="tab-btn-heaviest" aria-selected="false" aria-controls="tab-panel-heaviest" data-tab="heaviest">
+        <span class="tab-icon" aria-hidden="true">🏆</span>
+        <span class="tab-text">Heaviest Weight</span>
+      </button>
+      <button type="button" class="tab-btn" role="tab" id="tab-btn-calories" aria-selected="false" aria-controls="tab-panel-calories" data-tab="calories">
+        <span class="tab-icon" aria-hidden="true">🔥</span>
+        <span class="tab-text">Daily Calories</span>
+      </button>
+      <button type="button" class="tab-btn" role="tab" id="tab-btn-log" aria-selected="false" aria-controls="tab-panel-log" data-tab="log">
+        <span class="tab-icon" aria-hidden="true">✍️</span>
+        <span class="tab-text">Log Weight</span>
+      </button>
+    </nav>
 
-      <!-- Starting Weight Card -->
-      <div class="summary-card">
-        <div class="card-icon" aria-hidden="true">🏁</div>
-        <div class="card-info">
-          <div class="card-label">Starting Weight</div>
-          <div class="card-value">
-            <span id="stat-start-weight">--</span>
-            <span class="unit-sm">kg</span>
-          </div>
-          <div id="stat-start-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
-          <div id="stat-start-weeks" class="weeks-subtext">-- weeks gone by</div>
-          <div id="stat-start-date" class="stat-subtext">First weigh-in</div>
-        </div>
-      </div>
+    <!-- =====================================================================
+         TAB 1: CURRENT WEIGHT SECTION
+         Contains: Summary Overview Cards, Goal Progress Gauge, Progress Graph, History Table
+         ===================================================================== -->
+    <div class="tab-panel active" id="tab-panel-current" role="tabpanel" aria-labelledby="tab-btn-current" data-panel="current">
 
-      <!-- Total Weight Lost / Gained Card -->
-      <div class="summary-card">
-        <div class="card-icon" id="stat-progress-icon" aria-hidden="true">⚖️</div>
-        <div class="card-info">
-          <div class="card-label">Total Weight Lost/Gained</div>
-          <div class="card-value" id="stat-total-change-container">
-            <span id="stat-total-change">--</span>
-            <span class="unit-sm">kg</span>
+      <!-- 1. DASHBOARD SUMMARY SECTION -->
+      <section class="summary-section" aria-label="Weight Summary Overview">
+        <!-- Prominent Featured Card: Current Weight -->
+        <div class="summary-card hero-card">
+          <div class="card-label">Current Weight</div>
+          <div class="hero-weight-display">
+            <span id="hero-current-weight" class="hero-number">--</span>
+            <span class="unit">kg</span>
           </div>
-          <div id="stat-total-change-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
-          <div id="stat-progress-subtext" class="stat-subtext">Overall progress</div>
-        </div>
-      </div>
-
-      <!-- Number of Recorded Weigh-ins Card -->
-      <div class="summary-card">
-        <div class="card-icon" aria-hidden="true">📅</div>
-        <div class="card-info">
-          <div class="card-label">Recorded Weigh-ins</div>
-          <div class="card-value">
-            <span id="stat-count">0</span>
-            <span class="unit-sm">logs</span>
+          <!-- Imperial Unit Display: Stone & Pounds and Total Pounds -->
+          <div class="hero-imperial-badge" id="hero-imperial-badge">
+            <span class="imperial-icon" aria-hidden="true">⚡</span>
+            <span id="hero-imperial-text">-- st -- lbs • -- lbs</span>
           </div>
-          <div class="stat-subtext">Total tracked sessions</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 1B. HEAVIEST WEIGHT & LIFETIME TRANSFORMATION SECTION -->
-    <section class="card heaviest-section" aria-label="Heaviest Weight Progress">
-      <div class="heaviest-cards-grid">
-        <!-- Card 1: Heaviest Weight Benchmark -->
-        <div class="heaviest-stat-card">
-          <div class="heaviest-card-top">
-            <span class="stat-pill pill-amber">⚡ Heaviest Weight</span>
-          </div>
-          <div class="heaviest-card-main">
-            <div class="heaviest-value">23 <span class="unit-text">st</span> 5 <span class="unit-text">lbs</span></div>
-            <div class="heaviest-subvalue">148.3 kg &bull; 327.0 lbs</div>
-          </div>
-          <div class="stat-subtext">All-time peak recorded bodyweight</div>
+          <div id="hero-date-badge" class="stat-subtext">Latest weigh-in</div>
         </div>
 
-        <!-- Card 2: Stone & Pounds Lost -->
-        <div class="heaviest-stat-card highlight-card">
-          <div class="heaviest-card-top">
-            <span class="stat-pill pill-green">📉 Stone &amp; Lbs Lost</span>
-          </div>
-          <div class="heaviest-card-main">
-            <div class="heaviest-value text-green" id="heaviest-lost-imperial">-- st -- lbs</div>
-            <div class="heaviest-subvalue text-green" id="heaviest-lost-lbs-total">-- lbs total loss</div>
-          </div>
-          <div class="stat-subtext">Total lost from 23 stone 5 lbs</div>
-        </div>
-
-        <!-- Card 3: Kilograms Lost -->
-        <div class="heaviest-stat-card highlight-card">
-          <div class="heaviest-card-top">
-            <span class="stat-pill pill-green">⚖️ Kilograms Lost</span>
-          </div>
-          <div class="heaviest-card-main">
-            <div class="heaviest-value text-green">
-              <span id="heaviest-lost-kg">--</span>
-              <span class="unit-text text-green">kg</span>
+        <!-- Starting Weight Card -->
+        <div class="summary-card">
+          <div class="card-icon" aria-hidden="true">🏁</div>
+          <div class="card-info">
+            <div class="card-label">Starting Weight</div>
+            <div class="card-value">
+              <span id="stat-start-weight">--</span>
+              <span class="unit-sm">kg</span>
             </div>
-            <div class="heaviest-subvalue text-green" id="heaviest-lost-percent">--% of peak weight lost</div>
+            <div id="stat-start-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
+            <div id="stat-start-weeks" class="weeks-subtext">-- weeks gone by</div>
+            <div id="stat-start-date" class="stat-subtext">First weigh-in</div>
           </div>
-          <div class="stat-subtext">Total metric loss from 148.3 kg</div>
         </div>
 
-        <!-- Card 4: Current vs Heaviest Comparison -->
-        <div class="heaviest-stat-card">
-          <div class="heaviest-card-top">
-            <span class="stat-pill pill-cyan">🎯 Current vs Peak</span>
-          </div>
-          <div class="heaviest-card-main">
-            <div class="heaviest-value">
-              <span id="heaviest-current-kg">--</span>
-              <span class="unit-text">kg</span>
+        <!-- Total Weight Lost / Gained Card -->
+        <div class="summary-card">
+          <div class="card-icon" id="stat-progress-icon" aria-hidden="true">⚖️</div>
+          <div class="card-info">
+            <div class="card-label">Total Weight Lost/Gained</div>
+            <div class="card-value" id="stat-total-change-container">
+              <span id="stat-total-change">--</span>
+              <span class="unit-sm">kg</span>
             </div>
-            <div class="heaviest-subvalue" id="heaviest-current-imperial">-- st -- lbs • -- lbs</div>
+            <div id="stat-total-change-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
+            <div id="stat-progress-subtext" class="stat-subtext">Overall progress</div>
           </div>
-          <div class="heaviest-progress-container">
-            <div class="heaviest-progress-bar-bg">
-              <div id="heaviest-progress-bar-fill" class="heaviest-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Number of Recorded Weigh-ins Card -->
+        <div class="summary-card">
+          <div class="card-icon" aria-hidden="true">📅</div>
+          <div class="card-info">
+            <div class="card-label">Recorded Weigh-ins</div>
+            <div class="card-value">
+              <span id="stat-count">0</span>
+              <span class="unit-sm">logs</span>
             </div>
-            <div class="heaviest-progress-labels">
-              <span>Peak: 23 st 5 lbs</span>
-              <span id="heaviest-progress-text">0% lost</span>
+            <div class="stat-subtext">Total tracked sessions</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TARGET GOAL GAUGE SECTION -->
+      <section class="card goal-gauge-section" aria-labelledby="goal-gauge-heading">
+        <div class="gauge-card-header">
+          <h2 id="goal-gauge-heading" class="section-title">
+            <span class="title-bullet"></span> Goal Progress
+          </h2>
+          <span id="gauge-badge-status" class="badge-gauge badge-neutral">In Progress</span>
+        </div>
+
+        <div class="gauge-wrapper">
+          <!-- SVG Semi-Circle Radial Gauge -->
+          <div class="gauge-chart-container">
+            <svg class="gauge-svg" viewBox="0 0 200 115" aria-hidden="true">
+              <defs>
+                <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#06b6d4" />
+                  <stop offset="60%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="#34d399" />
+                </linearGradient>
+              </defs>
+              <!-- Background Track -->
+              <path class="gauge-track" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="14" stroke-linecap="round" />
+              <!-- Active Progress Arc -->
+              <path id="gauge-fill-arc" class="gauge-fill" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.62" stroke-dashoffset="235.62" />
+            </svg>
+
+            <!-- Gauge Center Readout -->
+            <div class="gauge-readout">
+              <div id="gauge-percent-display" class="gauge-percent">0%</div>
+              <div id="gauge-subtitle-display" class="gauge-subtitle">to goal</div>
             </div>
           </div>
+
+          <!-- Gauge Endpoints and Key Milestones -->
+          <div class="gauge-meta-row">
+            <div class="gauge-meta-col start-col">
+              <span class="meta-label">🏁 Start</span>
+              <span id="gauge-start-weight" class="meta-val">-- kg</span>
+              <span id="gauge-start-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
+            </div>
+
+            <div class="gauge-meta-col current-col">
+              <span class="meta-label">⚡ Current</span>
+              <span id="gauge-current-weight" class="meta-val">-- kg</span>
+              <span id="gauge-current-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
+            </div>
+
+            <div class="gauge-meta-col goal-col">
+              <span class="meta-label">🎯 Target</span>
+              <span id="gauge-goal-weight" class="meta-val">-- kg</span>
+              <span id="gauge-goal-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
+            </div>
+          </div>
+
+          <!-- Detailed Progress Message -->
+          <div id="gauge-detail-msg" class="gauge-detail-bar">
+            0.0 kg lost from starting weight &bull; 0.0 kg remaining to target
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. PROGRESS GRAPH CARD -->
+      <section class="card chart-card" aria-labelledby="chart-heading">
+        <div class="chart-header">
+          <div>
+            <h2 id="chart-heading" class="section-title">
+              <span class="title-bullet"></span> Progress Graph
+            </h2>
+            <p class="section-desc">Weight over time (kg &bull; stone &bull; lbs)</p>
+          </div>
+          <div class="chart-controls">
+            <!-- Timeframe Filter Buttons (All, 3 Months, 1 Month) -->
+            <div class="timeframe-selector" role="group" aria-label="Graph Timeframe Filter">
+              <button type="button" class="btn-timeframe active" data-timeframe="all">All</button>
+              <button type="button" class="btn-timeframe" data-timeframe="3m">3 Months</button>
+              <button type="button" class="btn-timeframe" data-timeframe="1m">1 Month</button>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-dot"></span>
+              <span>Body Weight (kg)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas for the dynamic line chart -->
+        <div class="canvas-wrapper">
+          <canvas id="weight-chart" height="260"></canvas>
+          <!-- Empty State overlay when less than 2 points are logged -->
+          <div id="chart-empty-state" class="chart-empty hidden">
+            <p id="chart-empty-text">Log at least two weigh-ins to generate the progress graph.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. WEIGHT HISTORY TABLE SECTION -->
+      <section class="card history-section" aria-labelledby="history-heading">
+        <div class="history-header">
+          <div>
+            <h2 id="history-heading" class="section-title">
+              <span class="title-bullet"></span> Weight History
+            </h2>
+            <p class="section-desc">Chronological history with newest weigh-ins displayed first</p>
+          </div>
+          <div id="history-count-badge" class="badge">0 entries</div>
+        </div>
+
+        <!-- Responsive Table Wrapper -->
+        <div class="table-container">
+          <table class="history-table" id="history-table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Change</th>
+                <th scope="col" class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <!-- Dynamically populated by script.js -->
+            </tbody>
+          </table>
+
+          <!-- Empty state placeholder when no records exist -->
+          <div id="empty-history-message" class="empty-state hidden">
+            <div class="empty-icon">⚖️</div>
+            <h3>No weight records yet</h3>
+            <p>Use the Log Weight tab above to add your first weigh-in.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- =====================================================================
+         TAB 2: HEAVIEST WEIGHT SECTION
+         Contains: Benchmark stat cards, Stone & Pounds Lost, KG Lost, Peak Progress
+         ===================================================================== -->
+    <div class="tab-panel hidden" id="tab-panel-heaviest" role="tabpanel" aria-labelledby="tab-btn-heaviest" data-panel="heaviest">
+
+      <!-- Section Header Card -->
+      <div class="tab-header-card">
+        <div class="tab-header-badge">🏆</div>
+        <div>
+          <h2 class="tab-section-heading">Heaviest Weight Transformation</h2>
+          <p class="tab-section-desc">Lifetime progress and transformation calculated from your all-time heaviest weight of <strong>23 stone 5 pounds</strong> (148.3 kg &bull; 327.0 lbs)</p>
         </div>
       </div>
-    </section>
 
-    <!-- 1C. NUTRITION TARGETS & HEALTH METRICS (Calories, Protein, BMI & Goal Weight) -->
-    <section class="targets-section" aria-label="Daily Nutrition and Health Metrics">
-      
-      <!-- Daily Calories Card (Current Pounds × 12) -->
-      <div class="summary-card target-card">
-        <div class="card-icon icon-fire" aria-hidden="true">🔥</div>
-        <div class="card-info">
-          <div class="card-label">Daily Calories Target</div>
-          <div class="card-value">
-            <span id="target-calories">--</span>
-            <span class="unit-sm">kcal</span>
+      <!-- Heaviest Weight Cards Grid -->
+      <section class="card heaviest-section" aria-label="Heaviest Weight Progress">
+        <div class="heaviest-cards-grid">
+          <!-- Card 1: Heaviest Weight Benchmark -->
+          <div class="heaviest-stat-card">
+            <div class="heaviest-card-top">
+              <span class="stat-pill pill-amber">⚡ Heaviest Weight</span>
+            </div>
+            <div class="heaviest-card-main">
+              <div class="heaviest-value">23 <span class="unit-text">st</span> 5 <span class="unit-text">lbs</span></div>
+              <div class="heaviest-subvalue">148.3 kg &bull; 327.0 lbs</div>
+            </div>
+            <div class="stat-subtext">All-time peak recorded bodyweight</div>
           </div>
-          <div class="stat-subtext" id="target-calories-subtext">(Current lbs × 12) - 500</div>
+
+          <!-- Card 2: Stone & Pounds Lost -->
+          <div class="heaviest-stat-card highlight-card">
+            <div class="heaviest-card-top">
+              <span class="stat-pill pill-green">📉 Stone &amp; Lbs Lost</span>
+            </div>
+            <div class="heaviest-card-main">
+              <div class="heaviest-value text-green" id="heaviest-lost-imperial">-- st -- lbs</div>
+              <div class="heaviest-subvalue text-green" id="heaviest-lost-lbs-total">-- lbs total loss</div>
+            </div>
+            <div class="stat-subtext">Total lost from 23 stone 5 lbs</div>
+          </div>
+
+          <!-- Card 3: Kilograms Lost -->
+          <div class="heaviest-stat-card highlight-card">
+            <div class="heaviest-card-top">
+              <span class="stat-pill pill-green">⚖️ Kilograms Lost</span>
+            </div>
+            <div class="heaviest-card-main">
+              <div class="heaviest-value text-green">
+                <span id="heaviest-lost-kg">--</span>
+                <span class="unit-text text-green">kg</span>
+              </div>
+              <div class="heaviest-subvalue text-green" id="heaviest-lost-percent">--% of peak weight lost</div>
+            </div>
+            <div class="stat-subtext">Total metric loss from 148.3 kg</div>
+          </div>
+
+          <!-- Card 4: Current vs Heaviest Comparison -->
+          <div class="heaviest-stat-card">
+            <div class="heaviest-card-top">
+              <span class="stat-pill pill-cyan">🎯 Current vs Peak</span>
+            </div>
+            <div class="heaviest-card-main">
+              <div class="heaviest-value">
+                <span id="heaviest-current-kg">--</span>
+                <span class="unit-text">kg</span>
+              </div>
+              <div class="heaviest-subvalue" id="heaviest-current-imperial">-- st -- lbs • -- lbs</div>
+            </div>
+            <div class="heaviest-progress-container">
+              <div class="heaviest-progress-bar-bg">
+                <div id="heaviest-progress-bar-fill" class="heaviest-progress-bar-fill" style="width: 0%;"></div>
+              </div>
+              <div class="heaviest-progress-labels">
+                <span>Peak: 23 st 5 lbs</span>
+                <span id="heaviest-progress-text">0% lost</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transformation Milestones Track Card -->
+      <div class="card transformation-info-card">
+        <h3 class="info-card-title">✨ Lifetime Transformation Milestones</h3>
+        <p class="info-card-intro">Tracking your monumental body recomposition and weight reduction from 327 lbs (23 st 5 lbs):</p>
+        
+        <div class="milestones-track">
+          <div class="milestone-step step-done">
+            <div class="step-badge">🏁</div>
+            <div class="step-info">
+              <div class="step-name">Peak Benchmark Origin</div>
+              <div class="step-val">23 st 5 lbs (148.3 kg • 327.0 lbs)</div>
+              <div class="step-sub">Starting all-time heaviest point</div>
+            </div>
+            <span class="badge-status badge-done">Origin</span>
+          </div>
+
+          <div class="milestone-step step-done">
+            <div class="step-badge">🔥</div>
+            <div class="step-info">
+              <div class="step-name">20 Stone Club</div>
+              <div class="step-val">20 st 0 lbs (127.0 kg • 280.0 lbs)</div>
+              <div class="step-sub">Lost 3 st 5 lbs (47.0 lbs / 21.3 kg)</div>
+            </div>
+            <span class="badge-status badge-done">Achieved ✓</span>
+          </div>
+
+          <div class="milestone-step step-done">
+            <div class="step-badge">⚡</div>
+            <div class="step-info">
+              <div class="step-name">16 Stone Threshold</div>
+              <div class="step-val">16 st 0 lbs (101.6 kg • 224.0 lbs)</div>
+              <div class="step-sub">Lost 7 st 5 lbs (103.0 lbs / 46.7 kg)</div>
+            </div>
+            <span class="badge-status badge-done">Achieved ✓</span>
+          </div>
+
+          <div class="milestone-step step-active">
+            <div class="step-badge">🎯</div>
+            <div class="step-info">
+              <div class="step-name">Current Weight Range</div>
+              <div class="step-val">Sub-13 Stone Fitness Zone</div>
+              <div class="step-sub">Over 10+ Stone total lifetime fat loss accomplished!</div>
+            </div>
+            <span class="badge-status badge-active">Active</span>
+          </div>
         </div>
       </div>
 
-      <!-- Daily Protein Card (Current Pounds × 0.7 to 1.0) -->
-      <div class="summary-card target-card">
-        <div class="card-icon icon-protein" aria-hidden="true">🥩</div>
-        <div class="card-info">
-          <div class="card-label">Daily Protein Target</div>
-          <div class="card-value">
-            <span id="target-protein">--</span>
-            <span class="unit-sm">g</span>
-          </div>
-          <div class="stat-subtext" id="target-protein-subtext">Current lbs × 0.7g – 1g</div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 3: DAILY CALORIES SECTION
+         Contains: Daily Calories Target, Protein Target, BMI, Goal Weight
+         ===================================================================== -->
+    <div class="tab-panel hidden" id="tab-panel-calories" role="tabpanel" aria-labelledby="tab-btn-calories" data-panel="calories">
+
+      <!-- Section Header Card -->
+      <div class="tab-header-card">
+        <div class="tab-header-badge">🔥</div>
+        <div>
+          <h2 class="tab-section-heading">Daily Calories &amp; Nutrition Targets</h2>
+          <p class="tab-section-desc">Personalized nutrition targets dynamically adjusted based on your latest body weight</p>
         </div>
       </div>
 
-      <!-- BMI (Body Mass Index) Card -->
-      <div class="summary-card target-card">
-        <div class="card-icon icon-bmi" aria-hidden="true">📊</div>
-        <div class="card-info">
-          <div class="card-label">Body Mass Index (BMI)</div>
-          <div class="card-value">
-            <span id="stat-bmi">--</span>
-            <span id="bmi-badge" class="badge-bmi hidden">Normal</span>
+      <!-- Targets Section Cards -->
+      <section class="targets-section" aria-label="Daily Nutrition and Health Metrics">
+        
+        <!-- Daily Calories Card (Current Pounds × 12) - 500 -->
+        <div class="summary-card target-card">
+          <div class="card-icon icon-fire" aria-hidden="true">🔥</div>
+          <div class="card-info">
+            <div class="card-label">Daily Calories Target</div>
+            <div class="card-value">
+              <span id="target-calories">--</span>
+              <span class="unit-sm">kcal</span>
+            </div>
+            <div class="stat-subtext" id="target-calories-subtext">(Current lbs × 12) - 500</div>
           </div>
-          <div class="stat-subtext bmi-action-row">
-            <span id="stat-height-display">Height: 175 cm</span>
-            <button type="button" id="btn-edit-height" class="btn-link">Edit Height</button>
+        </div>
+
+        <!-- Daily Protein Card (Current Pounds × 0.7 to 1.0) -->
+        <div class="summary-card target-card">
+          <div class="card-icon icon-protein" aria-hidden="true">🥩</div>
+          <div class="card-info">
+            <div class="card-label">Daily Protein Target</div>
+            <div class="card-value">
+              <span id="target-protein">--</span>
+              <span class="unit-sm">g</span>
+            </div>
+            <div class="stat-subtext" id="target-protein-subtext">Current lbs × 0.7g – 1g</div>
+          </div>
+        </div>
+
+        <!-- BMI Card -->
+        <div class="summary-card target-card">
+          <div class="card-icon icon-bmi" aria-hidden="true">📊</div>
+          <div class="card-info">
+            <div class="card-label">Body Mass Index (BMI)</div>
+            <div class="card-value">
+              <span id="stat-bmi">--</span>
+              <span id="bmi-badge" class="badge-bmi hidden">Normal</span>
+            </div>
+            <div class="stat-subtext bmi-action-row">
+              <span id="stat-height-display">Height: 175 cm</span>
+              <button type="button" id="btn-edit-height" class="btn-link">Edit Height</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal Weight Card -->
+        <div class="summary-card target-card goal-card">
+          <div class="card-icon icon-goal" aria-hidden="true">🎯</div>
+          <div class="card-info">
+            <div class="goal-header-row">
+              <div class="card-label">Goal Weight</div>
+              <button type="button" id="btn-reset-goal" class="btn-mini-reset" title="Set or reset your goal weight">
+                Reset Goal
+              </button>
+            </div>
+            <div class="card-value">
+              <span id="stat-goal-weight">--</span>
+              <span class="unit-sm" id="stat-goal-unit">kg</span>
+            </div>
+            <div id="stat-goal-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
+            <div class="stat-subtext" id="stat-goal-subtext">No goal set</div>
+            <div class="goal-progress-bar-container" id="goal-progress-bar-container">
+              <div class="goal-progress-bar" id="goal-progress-bar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Nutrition & Science Guidance -->
+      <div class="card nutrition-info-card">
+        <h3 class="info-card-title">📋 Nutrition &amp; Target Formulas Explained</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-icon">🔥</span>
+            <div>
+              <strong>Calorie Deficit Formula</strong>
+              <p><code>(Body Weight in lbs × 12) - 500 kcal</code> provides a steady fat-loss deficit of approximately 1 lb (0.45 kg) per week while fueling daily energy and training sessions.</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🥩</span>
+            <div>
+              <strong>Protein Intake Range (0.7g – 1.0g / lb)</strong>
+              <p>Consuming 0.7g to 1.0g of protein per pound of body weight maximizes muscle protein synthesis (MPS) and protects lean muscle mass during weight loss.</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📊</span>
+            <div>
+              <strong>BMI Metric &amp; Height</strong>
+              <p>Body Mass Index evaluates body weight relative to your height in meters (<code>kg / m²</code>). Use the "Edit Height" button above to keep your height accurate.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Goal Weight & Reset Goal Card -->
-      <div class="summary-card target-card goal-card">
-        <div class="card-icon icon-goal" aria-hidden="true">🎯</div>
-        <div class="card-info">
-          <div class="goal-header-row">
-            <div class="card-label">Goal Weight</div>
-            <button type="button" id="btn-reset-goal" class="btn-mini-reset" title="Set or reset your goal weight">
-              Reset Goal
-            </button>
-          </div>
-          <div class="card-value">
-            <span id="stat-goal-weight">--</span>
-            <span class="unit-sm" id="stat-goal-unit">kg</span>
-          </div>
-          <div id="stat-goal-imperial" class="imperial-subtext">-- st -- lbs • -- lbs</div>
-          <div class="stat-subtext" id="stat-goal-subtext">No goal set</div>
-          <div class="goal-progress-bar-container" id="goal-progress-bar-container">
-            <div class="goal-progress-bar" id="goal-progress-bar" style="width: 0%;"></div>
-          </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 4: LOG WEIGHT SECTION
+         Contains: Weight Entry Form, Input helpers, Recent weigh-in logs
+         ===================================================================== -->
+    <div class="tab-panel hidden" id="tab-panel-log" role="tabpanel" aria-labelledby="tab-btn-log" data-panel="log">
+
+      <!-- Section Header Card -->
+      <div class="tab-header-card">
+        <div class="tab-header-badge">✍️</div>
+        <div>
+          <h2 class="tab-section-heading">Log Weight Entry</h2>
+          <p class="tab-section-desc">Record your daily weigh-in to keep your progress stats and charts up to date</p>
         </div>
       </div>
 
-    </section>
-
-    <!-- 1D. TARGET GOAL GAUGE SECTION -->
-    <section class="card goal-gauge-section" aria-labelledby="goal-gauge-heading">
-      <div class="gauge-card-header">
-        <h2 id="goal-gauge-heading" class="section-title">
-          <span class="title-bullet"></span> Goal Progress
-        </h2>
-        <span id="gauge-badge-status" class="badge-gauge badge-neutral">In Progress</span>
-      </div>
-
-      <div class="gauge-wrapper">
-        <!-- SVG Semi-Circle Radial Gauge -->
-        <div class="gauge-chart-container">
-          <svg class="gauge-svg" viewBox="0 0 200 115" aria-hidden="true">
-            <defs>
-              <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#06b6d4" />
-                <stop offset="60%" stop-color="#10b981" />
-                <stop offset="100%" stop-color="#34d399" />
-              </linearGradient>
-            </defs>
-            <!-- Background Track -->
-            <path class="gauge-track" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="14" stroke-linecap="round" />
-            <!-- Active Progress Arc -->
-            <path id="gauge-fill-arc" class="gauge-fill" d="M 25 100 A 75 75 0 0 1 175 100" fill="none" stroke="url(#gauge-gradient)" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.62" stroke-dashoffset="235.62" />
-          </svg>
-
-          <!-- Gauge Center Readout -->
-          <div class="gauge-readout">
-            <div id="gauge-percent-display" class="gauge-percent">0%</div>
-            <div id="gauge-subtitle-display" class="gauge-subtitle">to goal</div>
-          </div>
-        </div>
-
-        <!-- Gauge Endpoints and Key Milestones -->
-        <div class="gauge-meta-row">
-          <div class="gauge-meta-col start-col">
-            <span class="meta-label">🏁 Start</span>
-            <span id="gauge-start-weight" class="meta-val">-- kg</span>
-            <span id="gauge-start-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
-          </div>
-
-          <div class="gauge-meta-col current-col">
-            <span class="meta-label">⚡ Current</span>
-            <span id="gauge-current-weight" class="meta-val">-- kg</span>
-            <span id="gauge-current-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
-          </div>
-
-          <div class="gauge-meta-col goal-col">
-            <span class="meta-label">🎯 Target</span>
-            <span id="gauge-goal-weight" class="meta-val">-- kg</span>
-            <span id="gauge-goal-sub" class="meta-sub">-- st -- lbs • -- lbs</span>
-          </div>
-        </div>
-
-        <!-- Detailed Progress Message -->
-        <div id="gauge-detail-msg" class="gauge-detail-bar">
-          0.0 kg lost from starting weight &bull; 0.0 kg remaining to target
-        </div>
-      </div>
-    </section>
-
-    <!-- Main Workspace Grid: Log Weight Form and Progress Graph -->
-    <main class="dashboard-grid">
-
-      <!-- 2. WEIGHT ENTRY FORM CARD -->
+      <!-- Main Form Card -->
       <section class="card form-card" aria-labelledby="form-heading">
         <h2 id="form-heading" class="section-title">
-          <span class="title-bullet"></span> Log Weight Entry
+          <span class="title-bullet"></span> New Weigh-in Record
         </h2>
         <p class="section-desc">Record your weight for today or a specific date</p>
 
@@ -365,77 +585,42 @@
         </form>
       </section>
 
-      <!-- 3. PROGRESS GRAPH CARD -->
-      <section class="card chart-card" aria-labelledby="chart-heading">
-        <div class="chart-header">
+      <!-- Recent Weigh-ins Quick Table Card -->
+      <section class="card recent-section" aria-labelledby="recent-heading">
+        <div class="recent-header">
           <div>
-            <h2 id="chart-heading" class="section-title">
-              <span class="title-bullet"></span> Progress Graph
+            <h2 id="recent-heading" class="section-title">
+              <span class="title-bullet"></span> Recent Weigh-in Logs
             </h2>
-            <p class="section-desc">Weight over time (kg &bull; stone &bull; lbs)</p>
+            <p class="section-desc">Latest 5 recorded entries</p>
           </div>
-          <div class="chart-controls">
-            <!-- Timeframe Filter Buttons (All, 3 Months, 1 Month) -->
-            <div class="timeframe-selector" role="group" aria-label="Graph Timeframe Filter">
-              <button type="button" class="btn-timeframe active" data-timeframe="all">All</button>
-              <button type="button" class="btn-timeframe" data-timeframe="3m">3 Months</button>
-              <button type="button" class="btn-timeframe" data-timeframe="1m">1 Month</button>
-            </div>
-            <div class="chart-legend">
-              <span class="legend-dot"></span>
-              <span>Body Weight (kg)</span>
-            </div>
-          </div>
+          <button type="button" id="btn-jump-to-history" class="btn-text">
+            View All in Current Weight Tab →
+          </button>
         </div>
 
-        <!-- Canvas for the dynamic line chart -->
-        <div class="canvas-wrapper">
-          <canvas id="weight-chart" height="260"></canvas>
-          <!-- Empty State overlay when less than 2 points are logged -->
-          <div id="chart-empty-state" class="chart-empty hidden">
-            <p id="chart-empty-text">Log at least two weigh-ins to generate the progress graph.</p>
+        <div class="table-container">
+          <table class="history-table" id="recent-table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Change</th>
+              </tr>
+            </thead>
+            <tbody id="recent-tbody">
+              <!-- Dynamically populated with latest 5 records by script.js -->
+            </tbody>
+          </table>
+          <div id="empty-recent-message" class="empty-state hidden">
+            <div class="empty-icon">⚖️</div>
+            <h3>No weight records yet</h3>
+            <p>Use the form above to add your first weigh-in.</p>
           </div>
         </div>
       </section>
 
-    </main>
-
-    <!-- 4. WEIGHT HISTORY TABLE SECTION -->
-    <section class="card history-section" aria-labelledby="history-heading">
-      <div class="history-header">
-        <div>
-          <h2 id="history-heading" class="section-title">
-            <span class="title-bullet"></span> Weight History
-          </h2>
-          <p class="section-desc">Chronological history with newest weigh-ins displayed first</p>
-        </div>
-        <div id="history-count-badge" class="badge">0 entries</div>
-      </div>
-
-      <!-- Responsive Table Wrapper -->
-      <div class="table-container">
-        <table class="history-table" id="history-table">
-          <thead>
-            <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Weight</th>
-              <th scope="col">Change</th>
-              <th scope="col" class="text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody id="history-tbody">
-            <!-- Dynamically populated by script.js -->
-          </tbody>
-        </table>
-
-        <!-- Empty state placeholder when no records exist -->
-        <div id="empty-history-message" class="empty-state hidden">
-          <div class="empty-icon">⚖️</div>
-          <h3>No weight records yet</h3>
-          <p>Use the form above to add your first weigh-in.</p>
-        </div>
-      </div>
-    </section>
+    </div>
 
     <!-- MODALS SECTION -->
     <!-- 1. Set or Reset Goal Weight Modal -->

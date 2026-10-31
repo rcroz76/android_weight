@@ -22,6 +22,7 @@ const STORAGE_KEY = 'gym_weight_tracker_data';
 const GOAL_STORAGE_KEY = 'gym_goal_weight_kg';
 const HEIGHT_STORAGE_KEY = 'gym_user_height_cm';
 const TIMEFRAME_STORAGE_KEY = 'gym_chart_timeframe';
+const ACTIVE_TAB_STORAGE_KEY = 'gym_active_tab';
 
 // Default example data matching weights.json (used as initial sample data)
 const SAMPLE_WEIGHTS = [
@@ -139,6 +140,14 @@ const gaugeCurrentSub = document.getElementById('gauge-current-sub');
 const gaugeGoalWeight = document.getElementById('gauge-goal-weight');
 const gaugeGoalSub = document.getElementById('gauge-goal-sub');
 const gaugeDetailMsg = document.getElementById('gauge-detail-msg');
+
+// Tab Navigation & Recent Logs Elements
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+const recentTbody = document.getElementById('recent-tbody');
+const recentTable = document.getElementById('recent-table');
+const emptyRecentMessage = document.getElementById('empty-recent-message');
+const btnJumpToHistory = document.getElementById('btn-jump-to-history');
 
 
 /* ============================================================================
@@ -777,15 +786,20 @@ function renderHistoryTable() {
 
   // Clear existing table rows
   historyTbody.innerHTML = '';
+  if (recentTbody) recentTbody.innerHTML = '';
 
   if (recordsWithDiff.length === 0) {
     historyTable.classList.add('hidden');
     emptyHistoryMessage.classList.remove('hidden');
+    if (recentTable) recentTable.classList.add('hidden');
+    if (emptyRecentMessage) emptyRecentMessage.classList.remove('hidden');
     return;
   }
 
   historyTable.classList.remove('hidden');
   emptyHistoryMessage.classList.add('hidden');
+  if (recentTable) recentTable.classList.remove('hidden');
+  if (emptyRecentMessage) emptyRecentMessage.classList.add('hidden');
 
   // Reverse so newest entries appear at the top of the table
   const newestFirst = [...recordsWithDiff].reverse();
@@ -876,6 +890,67 @@ function renderHistoryTable() {
 
     historyTbody.appendChild(tr);
   });
+
+  // Populate Recent Weigh-ins Table (up to 5 entries) in Log Weight tab
+  if (recentTbody) {
+    const recentFive = newestFirst.slice(0, 5);
+    recentFive.forEach((entry) => {
+      const tr = document.createElement('tr');
+
+      // Date Cell
+      const tdDate = document.createElement('td');
+      tdDate.textContent = formatDisplayDate(entry.date);
+
+      // Weight Cell
+      const tdWeight = document.createElement('td');
+      tdWeight.className = 'weight-cell';
+      const kgDiv = document.createElement('div');
+      kgDiv.textContent = `${entry.weight.toFixed(1)} kg`;
+      const imperialSpan = document.createElement('span');
+      imperialSpan.className = 'table-sub-imperial';
+      imperialSpan.textContent = formatWeightImperial(entry.weight);
+      tdWeight.appendChild(kgDiv);
+      tdWeight.appendChild(imperialSpan);
+
+      // Change Cell
+      const tdChange = document.createElement('td');
+      if (entry.change === null) {
+        const badge = document.createElement('span');
+        badge.className = 'diff-badge neutral';
+        badge.textContent = '—';
+        tdChange.appendChild(badge);
+      } else {
+        const diffContainer = document.createElement('div');
+        diffContainer.className = 'diff-cell-container';
+
+        const badge = document.createElement('span');
+        badge.className = 'diff-badge';
+        if (entry.change < 0) {
+          badge.classList.add('loss');
+          badge.textContent = `${entry.change.toFixed(1)} kg`;
+        } else if (entry.change > 0) {
+          badge.classList.add('gain');
+          badge.textContent = `+${entry.change.toFixed(1)} kg`;
+        } else {
+          badge.classList.add('neutral');
+          badge.textContent = `0.0 kg`;
+        }
+
+        const imperialChangeSpan = document.createElement('span');
+        imperialChangeSpan.className = 'table-sub-imperial';
+        imperialChangeSpan.textContent = kgDiffToImperialWithLbs(entry.change);
+
+        diffContainer.appendChild(badge);
+        diffContainer.appendChild(imperialChangeSpan);
+        tdChange.appendChild(diffContainer);
+      }
+
+      tr.appendChild(tdDate);
+      tr.appendChild(tdWeight);
+      tr.appendChild(tdChange);
+      recentTbody.appendChild(tr);
+    });
+  }
 }
 
 /**
@@ -1536,26 +1611,137 @@ function handleSaveHeight() {
 
 
 /* ============================================================================
+   TAB NAVIGATION SYSTEM
+   Manages switching between the 4 main application sections:
+   1. Current Weight
+   2. Heaviest Weight
+   3. Daily Calories
+   4. Log Weight
+   ============================================================================ */
+
+/**
+ * Switches the active tab and displays the corresponding section panel.
+ * @param {string} tabName - 'current' | 'heaviest' | 'calories' | 'log'
+ */
+function switchTab(tabName) {
+  if (!tabName) return;
+
+  // Update tab buttons
+  const allTabBtns = document.querySelectorAll('.tab-btn');
+  allTabBtns.forEach(btn => {
+    const isTarget = btn.getAttribute('data-tab') === tabName;
+    btn.classList.toggle('active', isTarget);
+    btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+    btn.setAttribute('tabindex', isTarget ? '0' : '-1');
+  });
+
+  // Update tab panels
+  const allTabPanels = document.querySelectorAll('.tab-panel');
+  allTabPanels.forEach(panel => {
+    const isTarget = panel.getAttribute('data-panel') === tabName;
+    panel.classList.toggle('active', isTarget);
+    panel.classList.toggle('hidden', !isTarget);
+  });
+
+  // Save active tab preference
+  try {
+    localStorage.setItem(ACTIVE_TAB_STORAGE_KEY, tabName);
+  } catch (err) {
+    console.warn('Unable to persist active tab:', err);
+  }
+
+  // When switching to the Current Weight tab, redraw chart and gauge at proper rendered dimensions
+  if (tabName === 'current') {
+    requestAnimationFrame(() => {
+      renderProgressChart();
+      renderGoalGaugeChart();
+    });
+  }
+}
+
+/**
+ * Initializes tab event listeners and restores user's active tab.
+ */
+function initTabs() {
+  const allTabBtns = document.querySelectorAll('.tab-btn');
+  if (!allTabBtns || allTabBtns.length === 0) return;
+
+  allTabBtns.forEach((btn, index) => {
+    // Click listener
+    btn.addEventListener('click', () => {
+      const tabName = btn.getAttribute('data-tab');
+      switchTab(tabName);
+    });
+
+    // WAI-ARIA Keyboard Navigation
+    btn.addEventListener('keydown', (e) => {
+      let targetIndex = null;
+      if (e.key === 'ArrowRight') {
+        targetIndex = (index + 1) % allTabBtns.length;
+      } else if (e.key === 'ArrowLeft') {
+        targetIndex = (index - 1 + allTabBtns.length) % allTabBtns.length;
+      } else if (e.key === 'Home') {
+        targetIndex = 0;
+      } else if (e.key === 'End') {
+        targetIndex = allTabBtns.length - 1;
+      }
+
+      if (targetIndex !== null) {
+        e.preventDefault();
+        allTabBtns[targetIndex].focus();
+        const nextTab = allTabBtns[targetIndex].getAttribute('data-tab');
+        switchTab(nextTab);
+      }
+    });
+  });
+
+  // Jump to History button in Log Weight tab
+  const btnJump = document.getElementById('btn-jump-to-history');
+  if (btnJump) {
+    btnJump.addEventListener('click', () => {
+      switchTab('current');
+      const histSection = document.querySelector('.history-section');
+      if (histSection) {
+        histSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // Restore saved active tab or default to 'current'
+  let savedTab = 'current';
+  try {
+    savedTab = localStorage.getItem(ACTIVE_TAB_STORAGE_KEY) || 'current';
+  } catch (e) {
+    savedTab = 'current';
+  }
+  switchTab(savedTab);
+}
+
+
+/* ============================================================================
    APPLICATION INITIALIZATION
    Runs when the DOM is fully loaded.
    ============================================================================ */
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Automatically set the date field to today's date when page loads
+  // 1. Initialize Tab Navigation
+  initTabs();
+
+  // 2. Automatically set the date field to today's date when page loads
   dateInput.value = getTodayDateString();
 
-  // 2. Attach Form Event Listeners
+  // 3. Attach Form Event Listeners
   weightForm.addEventListener('submit', handleSaveWeight);
   clearBtn.addEventListener('click', handleClearForm);
   if (weightInput) weightInput.addEventListener('input', updateWeightInputHint);
 
-  // 3. Goal Weight & Reset Goal Event Listeners
+  // 4. Goal Weight & Reset Goal Event Listeners
   btnResetGoal.addEventListener('click', handleOpenGoalModal);
   btnSaveGoal.addEventListener('click', handleSaveGoal);
   btnClearGoal.addEventListener('click', handleResetGoalWeight);
   btnCancelGoal.addEventListener('click', handleCloseGoalModal);
   goalWeightInput.addEventListener('input', updateGoalHint);
 
-  // 4. Height & BMI Event Listeners
+  // 5. Height & BMI Event Listeners
   btnEditHeight.addEventListener('click', handleOpenHeightModal);
   btnSaveHeight.addEventListener('click', handleSaveHeight);
   btnCancelHeight.addEventListener('click', handleCloseHeightModal);
@@ -1574,12 +1760,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 5. Redraw chart smoothly when the browser window is resized
+  // 6. Redraw chart smoothly when the browser window is resized
   window.addEventListener('resize', () => {
     renderProgressChart();
   });
 
-  // 6. Timeframe filter buttons ('All', '3 Months', '1 Month')
+  // 7. Timeframe filter buttons ('All', '3 Months', '1 Month')
   if (timeframeButtons && timeframeButtons.length > 0) {
     timeframeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1598,7 +1784,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Load data from localStorage (or weights.json fallback) and render UI
+  // 8. Load data from localStorage (or weights.json fallback) and render UI
   loadInitialData();
 });
 
